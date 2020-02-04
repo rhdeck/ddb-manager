@@ -141,7 +141,7 @@ class DDBHandler {
     this.cachedValues = {};
   }
   setId(id) {
-    this.id = id;
+    this.id = typeof id === "object" ? id : { id };
   }
   async set(key, value) {
     return this._update({ [key]: value });
@@ -183,7 +183,10 @@ class DDBHandler {
     return this;
   }
   async _create(o) {
-    const updates = this.processUpdates(o);
+    const updates = this.processUpdates(o).reduce(
+      (o, [key, value]) => ({ ...o, [key]: value }),
+      {}
+    );
     const params = {
       TableName: this.tableName,
       Item: { ...this.id, ...updates }
