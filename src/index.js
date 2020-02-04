@@ -204,6 +204,9 @@ class DDBHandler {
     if (o) this.setId(o);
     const params = { TableName: this.tableName, Key: this.id };
     let { Item } = await ddb.get(params).promise();
+    if (!Item) {
+      throw new Error("Item  does not exist in ddb", this.id, this.tableName);
+    }
     return this.loadFromItem(Item);
   }
   async loadFromItem(Item) {
