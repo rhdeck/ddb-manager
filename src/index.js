@@ -60,10 +60,9 @@ const queryPage = async (o, lastKey) => {
   if (limit && Items > limit - 1) return [Items];
   return [Items, LastEvaluatedKey];
 };
-
 const queryMap = async (o, f) => {
   let lastKey;
-  let out;
+  let out = [];
   do {
     const [arr, temp] = await queryPage(o, lastKey);
     out = [...out, ...(await Promise.all(arr.map(f)))];
@@ -96,6 +95,7 @@ const queryReduce = async (params, f, start, limit = 0) => {
   }
   return out;
 };
+
 const withHash = (hashKey, hashValue) => {
   const params = {
     KeyConditions: {
@@ -125,6 +125,31 @@ const hashReduce = async (
     limit
   );
 };
+const withSecondaryIndex = (key, value, IndexName) => {
+  const params = {
+    KeyConditionExpression: "#key=:value",
+    ExpressionAttributeNames: {
+      "#key": key
+    },
+    ExpressionAttributeValues: {
+      ":value": value
+    },
+    IndexName
+  };
+  return params;
+};
+
+const secondaryIndexMap = async (
+  key,
+  value,
+  indexName,
+  TableName,
+  f,
+  limit = 0
+) => {
+  const p = { ...withSecondaryIndex(key, value, indexName), TableName };
+  return queryMap(p, f, limit);
+};
 const queryCount = async params => {
   params.Select = "COUNT";
   let { Count, LastEvaluatedKey } = await ddb.query({ ...params }).promise();
@@ -141,7 +166,7 @@ class DDBHandler {
     this.cachedValues = {};
   }
   setId(id) {
-    this.id = id;
+    this.id = typeof id === "object" ? id : { id };
   }
   async set(key, value) {
     return this._update({ [key]: value });
@@ -183,7 +208,10 @@ class DDBHandler {
     return this;
   }
   async _create(o) {
-    const updates = this.processUpdates(o);
+    const updates = this.processUpdates(o).reduce(
+      (o, [key, value]) => ({ ...o, [key]: value }),
+      {}
+    );
     const params = {
       TableName: this.tableName,
       Item: { ...this.id, ...updates }
@@ -201,6 +229,9 @@ class DDBHandler {
     if (o) this.setId(o);
     const params = { TableName: this.tableName, Key: this.id };
     let { Item } = await ddb.get(params).promise();
+    if (!Item) {
+      throw new Error("Item  does not exist in ddb", this.id, this.tableName);
+    }
     return this.loadFromItem(Item);
   }
   async loadFromItem(Item) {
@@ -228,6 +259,9 @@ class DDBHandler {
   }
   async hashMap(hashValue, f) {
     return hashMap(this.hashKey(), hashValue, this.tableName, f);
+  }
+  async secondaryIndexMap(key, value, indexName, f) {
+    return secondaryIndexMap(key, value, indexName, this.tableName, f);
   }
 }
 export {
