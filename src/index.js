@@ -180,7 +180,7 @@ class DDBHandler {
     );
     this.cachedValues = processedUpdates.reduce(
       (o, [key, value]) => ({ ...o, [key]: value }),
-      this.cachedValues
+      this.cachedValues && {}
     );
     return processedUpdates;
   }
@@ -207,16 +207,23 @@ class DDBHandler {
     }
     return this;
   }
-  async _create(o) {
+  async _create(o, id) {
+    if (!id) id = this.id;
+    else this.id = id;
+    if (!id || !Object.values(id).length) {
+      throw new Error("Require an id to create record");
+    }
     const updates = this.processUpdates(o).reduce(
       (o, [key, value]) => ({ ...o, [key]: value }),
       {}
     );
+    const Item = { ...id, ...updates };
     const params = {
       TableName: this.tableName,
-      Item: { ...this.id, ...updates }
+      Item
     };
     await ddb.put(params).promise();
+    await this.loadFromItem(Item);
     return this;
   }
   get(key, def) {
