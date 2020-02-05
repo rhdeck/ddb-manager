@@ -60,10 +60,9 @@ const queryPage = async (o, lastKey) => {
   if (limit && Items > limit - 1) return [Items];
   return [Items, LastEvaluatedKey];
 };
-
 const queryMap = async (o, f) => {
   let lastKey;
-  let out;
+  let out = [];
   do {
     const [arr, temp] = await queryPage(o, lastKey);
     out = [...out, ...(await Promise.all(arr.map(f)))];
@@ -96,6 +95,7 @@ const queryReduce = async (params, f, start, limit = 0) => {
   }
   return out;
 };
+
 const withHash = (hashKey, hashValue) => {
   const params = {
     KeyConditions: {
@@ -124,6 +124,31 @@ const hashReduce = async (
     start,
     limit
   );
+};
+const withSecondaryIndex = (key, value, IndexName) => {
+  const params = {
+    KeyConditionExpression: "#key=:value",
+    ExpressionAttributeNames: {
+      "#key": key
+    },
+    ExpressionAttributeValues: {
+      ":value": value
+    },
+    IndexName
+  };
+  return params;
+};
+
+const secondaryIndexMap = async (
+  key,
+  value,
+  indexName,
+  TableName,
+  f,
+  limit = 0
+) => {
+  const p = { ...withSecondaryIndex(key, value, indexName), TableName };
+  return queryMap(p, f, limit);
 };
 const queryCount = async params => {
   params.Select = "COUNT";
@@ -234,6 +259,9 @@ class DDBHandler {
   }
   async hashMap(hashValue, f) {
     return hashMap(this.hashKey(), hashValue, this.tableName, f);
+  }
+  async secondaryIndexMap(key, value, indexName, f) {
+    return secondaryIndexMap(key, value, indexName, this.tableName, f);
   }
 }
 export {
