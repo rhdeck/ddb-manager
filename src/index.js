@@ -180,7 +180,7 @@ class DDBHandler {
     );
     this.cachedValues = processedUpdates.reduce(
       (o, [key, value]) => ({ ...o, [key]: value }),
-      this.cachedValues && {}
+      this.cachedValues || {}
     );
     return processedUpdates;
   }
