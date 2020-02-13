@@ -95,7 +95,6 @@ const queryReduce = async (params, f, start, limit = 0) => {
   }
   return out;
 };
-
 const withHash = (hashKey, hashValue) => {
   const params = {
     KeyConditions: {
@@ -138,7 +137,6 @@ const withSecondaryIndex = (key, value, IndexName) => {
   };
   return params;
 };
-
 const secondaryIndexMap = async (
   key,
   value,
@@ -180,7 +178,7 @@ class DDBHandler {
     );
     this.cachedValues = processedUpdates.reduce(
       (o, [key, value]) => ({ ...o, [key]: value }),
-      this.cachedValues && {}
+      this.cachedValues || {}
     );
     return processedUpdates;
   }
@@ -280,5 +278,6 @@ export {
   queryMap,
   scanMap,
   scanAll,
-  DDBHandler
+  DDBHandler,
+  queryPage
 };
