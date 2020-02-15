@@ -159,12 +159,16 @@ const queryCount = async params => {
 };
 const queryAll = async params => queryMap(params, item => item);
 class DDBHandler {
-  constructor(tableName) {
+  constructor(tableName, hashKey = "id") {
     this.tableName = tableName;
     this.cachedValues = {};
+    this._hashKey = hashKey;
   }
   setId(id) {
     this.id = typeof id === "object" ? id : { id };
+  }
+  hashKey() {
+    return this._hashKey || Object.keys(this.id)[0];
   }
   async set(key, value) {
     return this._update({ [key]: value });
@@ -265,8 +269,51 @@ class DDBHandler {
   async hashMap(hashValue, f) {
     return hashMap(this.hashKey(), hashValue, this.tableName, f);
   }
+  async hashReduce(hashValue, f, start) {
+    return hashReduce(this.hashKey(), hashValue, this.tableName, f, start);
+  }
   async secondaryIndexMap(key, value, indexName, f) {
     return secondaryIndexMap(key, value, indexName, this.tableName, f);
+  }
+  async hashPage(hashValue, lastValue) {
+    return queryPage({
+      tableName: this.tableName,
+      lastValue,
+      [this.hashKey()]: hashValue
+    });
+  }
+  async indexPage(indexName, key, value, lastValue) {
+    return queryPage({
+      ...withSecondaryIndex(key, value, indexName),
+      tableName: this.tableName,
+      lastValue
+    });
+  }
+  async hashFind(hashValue, f) {
+    let temp;
+    do {
+      const [items, lastIndex] = this.hashPage(hashValue, temp);
+      for (const i of items) if (f(i)) return i;
+      temp = lastIndex;
+    } while (temp);
+    return null;
+  }
+  async hashSome(hashValue, f) {
+    const item = await this.hashFind(hashValue, f);
+    return item !== null;
+  }
+  async indexFind(indexName, key, value, f) {
+    let temp;
+    do {
+      const [items, lastIndex] = this.indexPage(indexName, key, value, temp);
+      for (const i of items) if (f(i)) return i;
+      temp = lastIndex;
+    } while (temp);
+    return null;
+  }
+  async indexSome(indexName, key, value, f) {
+    const item = await this.indexFind(indexName, key, value, f);
+    return item !== null;
   }
 }
 export {
