@@ -54,6 +54,7 @@ const queryPage = async (o, lastKey) => {
     limit = l;
     params = rest;
   } else TableName = o;
+
   let { Items, LastEvaluatedKey } = await ddb
     .query({ ExclusiveStartKey: lastKey, TableName, ...params })
     .promise();
@@ -276,23 +277,27 @@ class DDBHandler {
     return secondaryIndexMap(key, value, indexName, this.tableName, f);
   }
   async hashPage(hashValue, lastValue) {
-    return queryPage({
-      tableName: this.tableName,
-      lastValue,
-      [this.hashKey()]: hashValue
-    });
+    return queryPage(
+      {
+        tableName: this.tableName,
+        ...withHash(this.hashKey(), hashValue)
+      },
+      lastValue
+    );
   }
   async indexPage(indexName, key, value, lastValue) {
-    return queryPage({
-      ...withSecondaryIndex(key, value, indexName),
-      tableName: this.tableName,
+    return queryPage(
+      {
+        ...withSecondaryIndex(key, value, indexName),
+        tableName: this.tableName
+      },
       lastValue
-    });
+    );
   }
   async hashFind(hashValue, f) {
     let temp;
     do {
-      const [items, lastIndex] = this.hashPage(hashValue, temp);
+      const [items, lastIndex] = await this.hashPage(hashValue, temp);
       for (const i of items) if (f(i)) return i;
       temp = lastIndex;
     } while (temp);
@@ -305,7 +310,12 @@ class DDBHandler {
   async indexFind(indexName, key, value, f) {
     let temp;
     do {
-      const [items, lastIndex] = this.indexPage(indexName, key, value, temp);
+      const [items, lastIndex] = await this.indexPage(
+        indexName,
+        key,
+        value,
+        temp
+      );
       for (const i of items) if (f(i)) return i;
       temp = lastIndex;
     } while (temp);
