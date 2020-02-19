@@ -253,7 +253,7 @@ class DDBHandler {
   async delete(key) {
     const params = {
       TableName: this.tableName,
-      Key: key ? key : this.getPrimaryKey()
+      Key: key ? key : this.id
     };
     await ddb.delete(params).promise();
     return this;
