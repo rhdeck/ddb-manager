@@ -178,13 +178,31 @@ class DDBHandler {
     return this._update(o);
   }
   processUpdates(updates) {
-    const processedUpdates = Object.entries(updates).filter(
-      ([field, _]) => !Object.keys(this.id).includes(field)
-    );
-    this.cachedValues = processedUpdates.reduce(
-      (o, [key, value]) => ({ ...o, [key]: value }),
-      this.cachedValues || {}
-    );
+    const processedUpdates = Object.entries(updates).filter(([field, _]) => {
+      if (field.includes(".")) {
+        field = field.split(".")[0];
+      }
+      return !Object.keys(this.id).includes(field);
+    });
+    this.cachedValues = processedUpdates.reduce((o, [key, value]) => {
+      if (key.includes("[")) {
+        //preventing expressions like. parent.list[index] = x
+        throw new Error("Update expression with lists not supported");
+      }
+      if (key.includes(".")) {
+        const keys = key.split(".");
+        const topKey = keys.shift();
+        const lastKey = keys.pop();
+        const topValue = { ...o[topKey] };
+        let val = topValue;
+        keys.forEach(key => {
+          val = val[key];
+        });
+        val[lastKey] = value;
+        return { ...o, [topKey]: topValue };
+      }
+      return { ...o, [key]: value };
+    }, this.cachedValues || {});
     return processedUpdates;
   }
   async _update(updates) {
@@ -193,19 +211,27 @@ class DDBHandler {
     const updateStatements = [];
     this.processUpdates(updates).forEach(([field, value]) => {
       if (value === "") value = null;
-      ExpressionAttributeNames[`#${field}`] = field;
-      ExpressionAttributeValues[`:${field}`] = value;
-      updateStatements.push(`#${field} = :${field}`);
+      if (field.includes(".")) {
+        const normalizedField = field.replace(/\./g, "_");
+        updateStatements.push(`${field} = :${normalizedField}`);
+        ExpressionAttributeValues[`:${normalizedField}`] = value;
+      } else {
+        updateStatements.push(`#${field} = :${field}`);
+        ExpressionAttributeNames[`#${field}`] = field;
+        ExpressionAttributeValues[`:${field}`] = value;
+      }
     });
     if (updateStatements.length) {
       const UpdateExpression = `SET ${updateStatements.join(",")}`;
       const updateParams = {
         TableName: this.tableName,
         Key: this.id,
-        ExpressionAttributeNames,
-        ExpressionAttributeValues,
-        UpdateExpression
+        UpdateExpression,
+        ExpressionAttributeValues
       };
+      if (Object.keys(ExpressionAttributeNames).length) {
+        updateParams.ExpressionAttributeNames = ExpressionAttributeNames;
+      }
       if (!(await ddb.update(updateParams).promise())) throw "Failed to update";
     }
     return this;
