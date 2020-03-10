@@ -209,12 +209,28 @@ class DDBHandler {
     const ExpressionAttributeNames = {};
     const ExpressionAttributeValues = {};
     const updateStatements = [];
+    const crypto = require("crypto");
+
     this.processUpdates(updates).forEach(([field, value]) => {
       if (value === "") value = null;
       if (field.includes(".")) {
-        const normalizedField = field.replace(/\./g, "_");
-        updateStatements.push(`${field} = :${normalizedField}`);
-        ExpressionAttributeValues[`:${normalizedField}`] = value;
+        const md5sum = crypto.createHash("md5");
+        md5sum.update(field);
+        const normalizedValueVariable = `:${md5sum.digest("hex")}`;
+        ExpressionAttributeValues[normalizedValueVariable] = value;
+        const normalizedNameVariable = field
+          .split(".")
+          .map(part => {
+            const md5sum = crypto.createHash("md5");
+            md5sum.update(part);
+            const newPart = `#${md5sum.digest("hex")}`;
+            ExpressionAttributeNames[newPart] = part;
+            return newPart;
+          })
+          .join(".");
+        updateStatements.push(
+          `${normalizedNameVariable} = ${normalizedValueVariable}`
+        );
       } else {
         updateStatements.push(`#${field} = :${field}`);
         ExpressionAttributeNames[`#${field}`] = field;
