@@ -1,4 +1,5 @@
 import { DynamoDB } from "aws-sdk";
+import { createHash } from "crypto";
 const ddb = new DynamoDB.DocumentClient();
 const scanAll = async params => {
   return await scanMap(params, o => o);
@@ -209,16 +210,34 @@ class DDBHandler {
     const ExpressionAttributeNames = {};
     const ExpressionAttributeValues = {};
     const updateStatements = [];
+
     this.processUpdates(updates).forEach(([field, value]) => {
       if (value === "") value = null;
       if (field.includes(".")) {
-        const normalizedField = field.replace(/\./g, "_");
-        updateStatements.push(`${field} = :${normalizedField}`);
-        ExpressionAttributeValues[`:${normalizedField}`] = value;
+        const md5sum = createHash("md5");
+        md5sum.update(field);
+        const normalizedValueVariable = `:${md5sum.digest("hex")}`;
+        ExpressionAttributeValues[normalizedValueVariable] = value;
+        const normalizedNameVariable = field
+          .split(".")
+          .map(part => {
+            const newPart = `#${createHash("md5")
+              .update(part)
+              .digest("hex")}`;
+            ExpressionAttributeNames[newPart] = part;
+            return newPart;
+          })
+          .join(".");
+        updateStatements.push(
+          `${normalizedNameVariable} = ${normalizedValueVariable}`
+        );
       } else {
-        updateStatements.push(`#${field} = :${field}`);
-        ExpressionAttributeNames[`#${field}`] = field;
-        ExpressionAttributeValues[`:${field}`] = value;
+        const newPart = `#${createHash("md5")
+          .update(field)
+          .digest("hex")}`;
+        updateStatements.push(`#${newPart} = :${field}`);
+        ExpressionAttributeNames[`#${newPart}`] = field;
+        ExpressionAttributeValues[`:${newPart}`] = value;
       }
     });
     if (updateStatements.length) {
