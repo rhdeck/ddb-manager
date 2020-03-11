@@ -232,7 +232,7 @@ class DDBHandler {
           `${normalizedNameVariable} = ${normalizedValueVariable}`
         );
       } else {
-        const newPart = `#${createHash("md5")
+        const newPart = `${createHash("md5")
           .update(field)
           .digest("hex")}`;
         updateStatements.push(`#${newPart} = :${field}`);
