@@ -235,7 +235,7 @@ class DDBHandler {
         const newPart = `${createHash("md5")
           .update(field)
           .digest("hex")}`;
-        updateStatements.push(`#${newPart} = :${field}`);
+        updateStatements.push(`#${newPart} = :${newPart}`);
         ExpressionAttributeNames[`#${newPart}`] = field;
         ExpressionAttributeValues[`:${newPart}`] = value;
       }
