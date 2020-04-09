@@ -255,7 +255,7 @@ class DDBHandler {
     }
     return this;
   }
-  async _create(o, id) {
+  async _create(o, id, options = {}) {
     if (!id) id = this.id;
     else this.id = id;
     if (!id || !Object.values(id).length) {
@@ -268,7 +268,8 @@ class DDBHandler {
     const Item = { ...id, ...updates };
     const params = {
       TableName: this.tableName,
-      Item
+      Item,
+      ...options
     };
     await ddb.put(params).promise();
     await this.loadFromItem(Item);
