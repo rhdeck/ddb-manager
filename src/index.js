@@ -1,8 +1,8 @@
 import { DynamoDB } from "aws-sdk";
 import { createHash } from "crypto";
 const ddb = new DynamoDB.DocumentClient();
-const scanAll = async params => {
-  return await scanMap(params, o => o);
+const scanAll = async (params) => {
+  return await scanMap(params, (o) => o);
 };
 const scanMap = async (o, f) => {
   let lastKey;
@@ -102,9 +102,9 @@ const withHash = (hashKey, hashValue) => {
     KeyConditions: {
       [hashKey]: {
         ComparisonOperator: "EQ",
-        AttributeValueList: [hashValue]
-      }
-    }
+        AttributeValueList: [hashValue],
+      },
+    },
   };
   return params;
 };
@@ -130,12 +130,12 @@ const withSecondaryIndex = (key, value, IndexName) => {
   const params = {
     KeyConditionExpression: "#key=:value",
     ExpressionAttributeNames: {
-      "#key": key
+      "#key": key,
     },
     ExpressionAttributeValues: {
-      ":value": value
+      ":value": value,
     },
-    IndexName
+    IndexName,
   };
   return params;
 };
@@ -150,7 +150,7 @@ const secondaryIndexMap = async (
   const p = { ...withSecondaryIndex(key, value, indexName), TableName };
   return queryMap(p, f, limit);
 };
-const queryCount = async params => {
+const queryCount = async (params) => {
   params.Select = "COUNT";
   let { Count, LastEvaluatedKey } = await ddb.query({ ...params }).promise();
   if (LastEvaluatedKey) {
@@ -159,7 +159,7 @@ const queryCount = async params => {
   }
   return Count;
 };
-const queryAll = async params => queryMap(params, item => item);
+const queryAll = async (params) => queryMap(params, (item) => item);
 class DDBHandler {
   constructor(tableName, hashKey = "id") {
     this.tableName = tableName;
@@ -196,7 +196,7 @@ class DDBHandler {
         const lastKey = keys.pop();
         const topValue = { ...o[topKey] };
         let val = topValue;
-        keys.forEach(key => {
+        keys.forEach((key) => {
           val = val[key];
         });
         val[lastKey] = value;
@@ -220,10 +220,8 @@ class DDBHandler {
         ExpressionAttributeValues[normalizedValueVariable] = value;
         const normalizedNameVariable = field
           .split(".")
-          .map(part => {
-            const newPart = `#${createHash("md5")
-              .update(part)
-              .digest("hex")}`;
+          .map((part) => {
+            const newPart = `#${createHash("md5").update(part).digest("hex")}`;
             ExpressionAttributeNames[newPart] = part;
             return newPart;
           })
@@ -232,9 +230,7 @@ class DDBHandler {
           `${normalizedNameVariable} = ${normalizedValueVariable}`
         );
       } else {
-        const newPart = `${createHash("md5")
-          .update(field)
-          .digest("hex")}`;
+        const newPart = `${createHash("md5").update(field).digest("hex")}`;
         updateStatements.push(`#${newPart} = :${newPart}`);
         ExpressionAttributeNames[`#${newPart}`] = field;
         ExpressionAttributeValues[`:${newPart}`] = value;
@@ -246,7 +242,7 @@ class DDBHandler {
         TableName: this.tableName,
         Key: this.id,
         UpdateExpression,
-        ExpressionAttributeValues
+        ExpressionAttributeValues,
       };
       if (Object.keys(ExpressionAttributeNames).length) {
         updateParams.ExpressionAttributeNames = ExpressionAttributeNames;
@@ -269,7 +265,7 @@ class DDBHandler {
     const params = {
       TableName: this.tableName,
       Item,
-      ...options
+      ...options,
     };
     await ddb.put(params).promise();
     await this.loadFromItem(Item);
@@ -286,7 +282,12 @@ class DDBHandler {
     const params = { TableName: this.tableName, Key: this.id };
     let { Item } = await ddb.get(params).promise();
     if (!Item) {
-      throw new Error("Item  does not exist in ddb", this.id, this.tableName);
+      throw new Error(
+        "Item  does not exist in ddb id:" +
+          JSON.stringify(this.id) +
+          " table: " +
+          this.tableName
+      );
     }
     return this.loadFromItem(Item);
   }
@@ -299,7 +300,7 @@ class DDBHandler {
   async delete(key) {
     const params = {
       TableName: this.tableName,
-      Key: key ? key : this.id
+      Key: key ? key : this.id,
     };
     await ddb.delete(params).promise();
     return this;
@@ -326,7 +327,7 @@ class DDBHandler {
     return queryPage(
       {
         tableName: this.tableName,
-        ...withHash(this.hashKey(), hashValue)
+        ...withHash(this.hashKey(), hashValue),
       },
       lastValue
     );
@@ -335,7 +336,7 @@ class DDBHandler {
     return queryPage(
       {
         ...withSecondaryIndex(key, value, indexName),
-        tableName: this.tableName
+        tableName: this.tableName,
       },
       lastValue
     );
@@ -382,5 +383,5 @@ export {
   scanMap,
   scanAll,
   DDBHandler,
-  queryPage
+  queryPage,
 };
