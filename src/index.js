@@ -1,6 +1,15 @@
 import { DynamoDB } from "aws-sdk";
 import { createHash } from "crypto";
-const ddb = new DynamoDB.DocumentClient();
+let savedDDB = null;
+const setDDB = (newDDB) => {
+  savedDDB = newDDB;
+};
+const ddb = () => {
+  if (!savedDDB) {
+    savedDDB = new DynamoDB.DocumentClient();
+  }
+  return savedDDB;
+};
 const scanAll = async (params) => {
   return await scanMap(params, (o) => o);
 };
@@ -39,7 +48,7 @@ const scanPage = async (o, lastKey) => {
     limit = l;
     params = rest;
   } else TableName = o;
-  let { Items, LastEvaluatedKey } = await ddb
+  let { Items, LastEvaluatedKey } = await ddb()
     .scan({ ExclusiveStartKey: lastKey, TableName, ...params })
     .promise();
   if (limit && Items > limit - 1) return [Items];
@@ -56,7 +65,7 @@ const queryPage = async (o, lastKey) => {
     params = rest;
   } else TableName = o;
 
-  let { Items, LastEvaluatedKey } = await ddb
+  let { Items, LastEvaluatedKey } = await ddb()
     .query({ ExclusiveStartKey: lastKey, TableName, ...params })
     .promise();
   if (limit && Items > limit - 1) return [Items];
@@ -88,7 +97,9 @@ const queryMapSerial = async (o, f) => {
   return out;
 };
 const queryReduce = async (params, f, start, limit = 0) => {
-  let results = await ddb.query({ ...params }).promise();
+  let results = await ddb()
+    .query({ ...params })
+    .promise();
   const out = results.Items.reduce(f, start);
   if (limit && out.length > limit - 1) return out;
   if (results.LastEvaluatedKey) {
@@ -152,7 +163,9 @@ const secondaryIndexMap = async (
 };
 const queryCount = async (params) => {
   params.Select = "COUNT";
-  let { Count, LastEvaluatedKey } = await ddb.query({ ...params }).promise();
+  let { Count, LastEvaluatedKey } = await ddb()
+    .query({ ...params })
+    .promise();
   if (LastEvaluatedKey) {
     params.ExclusiveStartKey = LastEvaluatedKey;
     return Count + (await queryCount(params));
@@ -247,7 +260,8 @@ class DDBHandler {
       if (Object.keys(ExpressionAttributeNames).length) {
         updateParams.ExpressionAttributeNames = ExpressionAttributeNames;
       }
-      if (!(await ddb.update(updateParams).promise())) throw "Failed to update";
+      if (!(await ddb().update(updateParams).promise()))
+        throw "Failed to update";
     }
     return this;
   }
@@ -267,7 +281,7 @@ class DDBHandler {
       Item,
       ...options,
     };
-    await ddb.put(params).promise();
+    await ddb().put(params).promise();
     await this.loadFromItem(Item);
     return this;
   }
@@ -280,7 +294,7 @@ class DDBHandler {
   async load(o) {
     if (o) this.setId(o);
     const params = { TableName: this.tableName, Key: this.id };
-    let { Item } = await ddb.get(params).promise();
+    let { Item } = await ddb().get(params).promise();
     if (!Item) {
       throw new Error(
         "Item  does not exist in ddb id:" +
@@ -302,7 +316,7 @@ class DDBHandler {
       TableName: this.tableName,
       Key: key ? key : this.id,
     };
-    await ddb.delete(params).promise();
+    await ddb().delete(params).promise();
     return this;
   }
   async all() {
@@ -384,4 +398,5 @@ export {
   scanAll,
   DDBHandler,
   queryPage,
+  setDDB,
 };
