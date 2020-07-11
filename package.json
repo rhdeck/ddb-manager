@@ -13,12 +13,12 @@
     "watch": "livelink watch"
   },
   "devDependencies": {
-    "@raydeck/livelink": "^1.5.2",
     "@types/node": "^14.0.22",
     "eslint": "^7.0.0",
     "typescript": "^3.9.6"
   },
   "dependencies": {
+    "@raydeck/livelink": "^1.5.2",
     "aws-sdk": "^2.610.0"
   }
 }
