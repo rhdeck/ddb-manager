@@ -20,5 +20,9 @@
   "dependencies": {
     "@raydeck/livelink": "^1.5.2",
     "aws-sdk": "^2.610.0"
-  }
+  },
+  "files": [
+    "src",
+    "lib"
+  ]
 }
