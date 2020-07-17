@@ -212,11 +212,11 @@ const queryAll = async (
   queryMap(params, (item) => item);
 class DDBHandler {
   protected tableName: string;
-  protected cachedValues: { [key: string]: any } = {};
+  public cachedValues: { [key: string]: any } = {};
   protected _hashKey: string;
-  protected id: {};
-  protected exists: boolean = false;
-  protected loaded: boolean = false;
+  public id: {};
+  public exists: boolean = false;
+  public loaded: boolean = false;
   constructor(tableName: string, hashKey: string = "id") {
     this.tableName = tableName;
     this._hashKey = hashKey;
@@ -306,7 +306,7 @@ class DDBHandler {
     }
     return this;
   }
-  protected async _create(
+  async _create(
     o: { [key: string]: any },
     id: any,
     options: { [key: string]: any } = {}
@@ -341,7 +341,7 @@ class DDBHandler {
     const params = { TableName: this.tableName, Key: this.id };
     let { Item } = await ddb().get(params).promise();
     if (!Item) {
-      console.warn("Error in loading item from DDB with params", { params });
+      // console.warn("Error in loading item from DDB with params", { params });
       throw new Error(
         "Item  does not exist in ddb id:" +
           JSON.stringify(this.id) +
@@ -363,7 +363,7 @@ class DDBHandler {
       Key: key ? key : this.id,
     };
     await ddb().delete(params).promise();
-    return this;
+    return;
   }
   async all() {
     return scanAll({ TableName: this.tableName });
