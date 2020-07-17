@@ -82,7 +82,7 @@ const queryPage = async (
 };
 const queryMap = async <T>(
   o: queryOptions,
-  f: (item: DynamoDB.DocumentClient.AttributeMap) => T
+  f: (item: DynamoDB.DocumentClient.AttributeMap) => Promise<T> | T
 ) => {
   let lastKey: DynamoDB.DocumentClient.Key;
   let out: T[] = [];
@@ -187,7 +187,7 @@ const secondaryIndexMap = async <T>(
   value: any,
   indexName: string,
   TableName: string,
-  f: (item: DynamoDB.DocumentClient.AttributeMap) => T,
+  f: (item: DynamoDB.DocumentClient.AttributeMap) => Promise<T> | T,
   limit = 0
 ) => {
   const p = { ...withSecondaryIndex(key, value, indexName), TableName };
@@ -357,7 +357,7 @@ class DDBHandler {
     this.loaded = true;
     return this;
   }
-  async delete(key?: string) {
+  async delete(key?: string | { [key: string]: string }) {
     const params = {
       TableName: this.tableName,
       Key: key ? key : this.id,
@@ -395,7 +395,7 @@ class DDBHandler {
     key: string,
     value: any,
     indexName: string,
-    f: (item: DynamoDB.DocumentClient.AttributeMap) => T
+    f: (item: DynamoDB.DocumentClient.AttributeMap) => Promise<T> | T
   ): Promise<T[]> {
     return secondaryIndexMap(key, value, indexName, this.tableName, f);
   }
