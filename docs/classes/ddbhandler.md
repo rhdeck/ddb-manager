@@ -1,4 +1,4 @@
-[@raydeck/ddb-manager - v2.1.5](../README.md) › [DDBHandler](ddbhandler.md)
+[@raydeck/ddb-manager - v2.1.6](../README.md) › [DDBHandler](ddbhandler.md)
 
 # Class: DDBHandler
 
@@ -54,7 +54,7 @@
 
 \+ **new DDBHandler**(`tableName`: string, `hashKey`: string): *[DDBHandler](ddbhandler.md)*
 
-*Defined in [src/index.ts:226](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L226)*
+*Defined in [src/index.ts:226](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L226)*
 
 **Parameters:**
 
@@ -71,7 +71,7 @@ Name | Type | Default |
 
 • **_hashKey**: *string*
 
-*Defined in [src/index.ts:223](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L223)*
+*Defined in [src/index.ts:223](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L223)*
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 • **cachedValues**: *object*
 
-*Defined in [src/index.ts:222](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L222)*
+*Defined in [src/index.ts:222](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L222)*
 
 #### Type declaration:
 
@@ -91,7 +91,7 @@ ___
 
 • **exists**: *boolean* = false
 
-*Defined in [src/index.ts:225](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L225)*
+*Defined in [src/index.ts:225](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L225)*
 
 ___
 
@@ -99,7 +99,7 @@ ___
 
 • **id**: *object*
 
-*Defined in [src/index.ts:224](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L224)*
+*Defined in [src/index.ts:224](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L224)*
 
 #### Type declaration:
 
@@ -109,7 +109,7 @@ ___
 
 • **loaded**: *boolean* = false
 
-*Defined in [src/index.ts:226](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L226)*
+*Defined in [src/index.ts:226](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L226)*
 
 ___
 
@@ -117,7 +117,7 @@ ___
 
 • **tableName**: *string*
 
-*Defined in [src/index.ts:221](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L221)*
+*Defined in [src/index.ts:221](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L221)*
 
 ## Methods
 
@@ -125,7 +125,7 @@ ___
 
 ▸ **_create**(`o`: object, `id`: any, `options`: object): *Promise‹this›*
 
-*Defined in [src/index.ts:316](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L316)*
+*Defined in [src/index.ts:316](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L316)*
 
 **Parameters:**
 
@@ -143,7 +143,7 @@ ___
 
 ▸ **_update**(`updates`: object): *Promise‹this›*
 
-*Defined in [src/index.ts:271](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L271)*
+*Defined in [src/index.ts:271](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L271)*
 
 **Parameters:**
 
@@ -159,7 +159,7 @@ ___
 
 ▸ **all**(): *Promise‹object[]›*
 
-*Defined in [src/index.ts:375](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L375)*
+*Defined in [src/index.ts:375](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L375)*
 
 **Returns:** *Promise‹object[]›*
 
@@ -169,7 +169,7 @@ ___
 
 ▸ **delete**(`key?`: string | object): *Promise‹void›*
 
-*Defined in [src/index.ts:367](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L367)*
+*Defined in [src/index.ts:367](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L367)*
 
 **Parameters:**
 
@@ -185,7 +185,7 @@ ___
 
 ▸ **get**‹**T**›(`key`: string, `def?`: T): *T | undefined*
 
-*Defined in [src/index.ts:340](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L340)*
+*Defined in [src/index.ts:340](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L340)*
 
 **Type parameters:**
 
@@ -206,7 +206,7 @@ ___
 
 ▸ **has**(`key`: string): *boolean*
 
-*Defined in [src/index.ts:343](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L343)*
+*Defined in [src/index.ts:343](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L343)*
 
 **Parameters:**
 
@@ -222,7 +222,7 @@ ___
 
 ▸ **hashFind**(`hashValue`: any, `f`: function): *Promise‹object›*
 
-*Defined in [src/index.ts:428](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L428)*
+*Defined in [src/index.ts:428](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L428)*
 
 **Parameters:**
 
@@ -246,7 +246,7 @@ ___
 
 ▸ **hashKey**(): *string*
 
-*Defined in [src/index.ts:234](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L234)*
+*Defined in [src/index.ts:234](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L234)*
 
 **Returns:** *string*
 
@@ -256,7 +256,7 @@ ___
 
 ▸ **hashMap**‹**T**›(`hashValue`: any, `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:384](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L384)*
+*Defined in [src/index.ts:384](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L384)*
 
 **Type parameters:**
 
@@ -284,7 +284,7 @@ ___
 
 ▸ **hashPage**(`hashValue`: any, `lastValue?`: string): *Promise‹[object[], string]›*
 
-*Defined in [src/index.ts:405](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L405)*
+*Defined in [src/index.ts:405](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L405)*
 
 **Parameters:**
 
@@ -301,7 +301,7 @@ ___
 
 ▸ **hashReduce**‹**T**›(`hashValue`: any, `f`: function, `start`: T): *Promise‹T›*
 
-*Defined in [src/index.ts:390](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L390)*
+*Defined in [src/index.ts:390](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L390)*
 
 **Type parameters:**
 
@@ -331,7 +331,7 @@ ___
 
 ▸ **hashSome**(`hashValue`: any, `f`: function): *Promise‹boolean›*
 
-*Defined in [src/index.ts:440](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L440)*
+*Defined in [src/index.ts:440](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L440)*
 
 **Parameters:**
 
@@ -355,7 +355,7 @@ ___
 
 ▸ **indexFind**(`indexName`: string, `key`: string, `value`: any, `f`: function): *Promise‹object›*
 
-*Defined in [src/index.ts:444](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L444)*
+*Defined in [src/index.ts:444](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L444)*
 
 **Parameters:**
 
@@ -383,7 +383,7 @@ ___
 
 ▸ **indexPage**(`indexName`: string, `key`: string, `value`: any, `lastValue?`: string): *Promise‹[object[], string]›*
 
-*Defined in [src/index.ts:414](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L414)*
+*Defined in [src/index.ts:414](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L414)*
 
 **Parameters:**
 
@@ -402,7 +402,7 @@ ___
 
 ▸ **indexSome**(`indexName`: string, `key`: string, `value`: any, `f`: function): *Promise‹boolean›*
 
-*Defined in [src/index.ts:463](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L463)*
+*Defined in [src/index.ts:463](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L463)*
 
 **Parameters:**
 
@@ -430,7 +430,7 @@ ___
 
 ▸ **load**(`o`: any): *Promise‹this›*
 
-*Defined in [src/index.ts:346](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L346)*
+*Defined in [src/index.ts:346](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L346)*
 
 **Parameters:**
 
@@ -446,7 +446,7 @@ ___
 
 ▸ **loadFromItem**(`Item`: object): *this*
 
-*Defined in [src/index.ts:361](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L361)*
+*Defined in [src/index.ts:361](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L361)*
 
 **Parameters:**
 
@@ -462,7 +462,7 @@ ___
 
 ▸ **map**‹**T**›(`f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:378](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L378)*
+*Defined in [src/index.ts:378](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L378)*
 
 **Type parameters:**
 
@@ -488,7 +488,7 @@ ___
 
 ▸ **mapSerial**‹**T**›(`f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:381](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L381)*
+*Defined in [src/index.ts:381](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L381)*
 
 **Type parameters:**
 
@@ -514,7 +514,7 @@ ___
 
 ▸ **processUpdates**(`updates`: object): *[string, any][]*
 
-*Defined in [src/index.ts:243](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L243)*
+*Defined in [src/index.ts:243](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L243)*
 
 **Parameters:**
 
@@ -530,7 +530,7 @@ ___
 
 ▸ **secondaryIndexMap**‹**T**›(`key`: string, `value`: any, `indexName`: string, `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:397](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L397)*
+*Defined in [src/index.ts:397](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L397)*
 
 **Type parameters:**
 
@@ -562,7 +562,7 @@ ___
 
 ▸ **set**(`key`: string, `value`: any): *Promise‹void›*
 
-*Defined in [src/index.ts:237](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L237)*
+*Defined in [src/index.ts:237](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L237)*
 
 **Parameters:**
 
@@ -579,7 +579,7 @@ ___
 
 ▸ **setId**(`id`: string | object): *void*
 
-*Defined in [src/index.ts:231](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L231)*
+*Defined in [src/index.ts:231](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L231)*
 
 **Parameters:**
 
@@ -595,7 +595,7 @@ ___
 
 ▸ **setValues**(`o`: object): *Promise‹void›*
 
-*Defined in [src/index.ts:240](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L240)*
+*Defined in [src/index.ts:240](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L240)*
 
 **Parameters:**
 

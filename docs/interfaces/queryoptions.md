@@ -1,4 +1,4 @@
-[@raydeck/ddb-manager - v2.1.5](../README.md) › [queryOptions](queryoptions.md)
+[@raydeck/ddb-manager - v2.1.6](../README.md) › [queryOptions](queryoptions.md)
 
 # Interface: queryOptions
 
@@ -240,7 +240,7 @@ ___
 
 • **limit**? : *number*
 
-*Defined in [src/index.ts:7](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L7)*
+*Defined in [src/index.ts:7](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L7)*
 
 ___
 
@@ -248,4 +248,4 @@ ___
 
 • **tableName**? : *string*
 
-*Defined in [src/index.ts:6](https://github.com/rhdeck/ddb-manager/blob/c73ea1b/src/index.ts#L6)*
+*Defined in [src/index.ts:6](https://github.com/rhdeck/ddb-manager/blob/3b93ff1/src/index.ts#L6)*
