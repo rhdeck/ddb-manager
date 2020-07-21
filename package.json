@@ -1,6 +1,6 @@
 {
   "name": "@raydeck/ddb-manager",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "Base class for managing DynamoDB model",
   "main": "lib/index.js",
   "types": "lib/types",
