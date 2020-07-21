@@ -1,6 +1,6 @@
 import { DynamoDB } from "aws-sdk";
 import { createHash } from "crypto";
-import { UpdateItemInput } from "aws-sdk/clients/dynamodb";
+import { UpdateItemInput, DocumentClient } from "aws-sdk/clients/dynamodb";
 type filterFunc = (arg: any) => boolean;
 interface queryOptions extends DynamoDB.DocumentClient.QueryInput {
   tableName?: string;
@@ -25,7 +25,7 @@ const scanMap = async <T>(
   o: queryOptions,
   f: (item: DynamoDB.DocumentClient.AttributeMap) => T
 ): Promise<T[]> => {
-  let lastKey: DynamoDB.DocumentClient.Key;
+  let lastKey: string;
   let out: T[] = [];
   do {
     const [arr, temp] = await scanPage(o, lastKey);
@@ -39,7 +39,7 @@ const scanMapSerial = async <T>(
   o: queryOptions,
   f: (item: DynamoDB.DocumentClient.AttributeMap) => T
 ): Promise<T[]> => {
-  let lastKey: DynamoDB.DocumentClient.Key;
+  let lastKey: string;
   let out: any[] = [];
   doloop: do {
     const [arr, temp] = await scanPage(o, lastKey);
@@ -54,37 +54,45 @@ const scanMapSerial = async <T>(
 };
 const scanPage = async (
   o: queryOptions,
-  lastKey?: DynamoDB.DocumentClient.Key
-): Promise<[DynamoDB.DocumentClient.ItemList, DynamoDB.DocumentClient.Key]> => {
+  lastKey?: string | DynamoDB.DocumentClient.Key | undefined
+): Promise<[DynamoDB.DocumentClient.ItemList, string]> => {
   const { tableName, limit: l = 0, ...rest } = o;
   const TableName = tableName ? tableName : rest.TableName;
   const limit = l;
   const params = rest;
   let { Items, LastEvaluatedKey } = await ddb()
-    .scan({ ExclusiveStartKey: lastKey, TableName, ...params })
+    .scan({
+      ExclusiveStartKey: <DynamoDB.DocumentClient.Key>lastKey,
+      TableName,
+      ...params,
+    })
     .promise();
   if (limit && Items.length > limit - 1) return [Items, undefined];
-  return [Items, LastEvaluatedKey];
+  return [Items, LastEvaluatedKey.toString()];
 };
 const queryPage = async (
   TableNameOrOptions: queryOptions,
-  lastKey?: DynamoDB.DocumentClient.Key
-): Promise<[DynamoDB.DocumentClient.ItemList, DynamoDB.DocumentClient.Key]> => {
+  lastKey?: DynamoDB.DocumentClient.Key | string | undefined
+): Promise<[DynamoDB.DocumentClient.ItemList, string]> => {
   const { tableName, limit: l = 0, ...rest } = TableNameOrOptions;
   const TableName = tableName ? tableName : rest.TableName;
   const limit = l;
   const params = rest;
   let { Items, LastEvaluatedKey } = await ddb()
-    .query({ ExclusiveStartKey: lastKey, TableName, ...params })
+    .query({
+      ExclusiveStartKey: <DynamoDB.DocumentClient.Key>lastKey,
+      TableName,
+      ...params,
+    })
     .promise();
   if (limit && Items.length > limit - 1) return [Items, undefined];
-  return [Items, LastEvaluatedKey];
+  return [Items, LastEvaluatedKey.toString()];
 };
 const queryMap = async <T>(
   o: queryOptions,
   f: (item: DynamoDB.DocumentClient.AttributeMap) => Promise<T> | T
 ) => {
-  let lastKey: DynamoDB.DocumentClient.Key;
+  let lastKey: string;
   let out: T[] = [];
   do {
     const [arr, temp] = await queryPage(o, lastKey);
@@ -98,7 +106,7 @@ const queryMapSerial = async <T>(
   o: queryOptions,
   f: (item: DynamoDB.DocumentClient.AttributeMap) => T
 ) => {
-  let lastKey: DynamoDB.DocumentClient.Key;
+  let lastKey: string;
   let out: T[] = [];
   doloop: do {
     const [arr, temp] = await queryPage(o, lastKey);
@@ -399,7 +407,7 @@ class DDBHandler {
   ): Promise<T[]> {
     return secondaryIndexMap(key, value, indexName, this.tableName, f);
   }
-  async hashPage(hashValue: any, lastValue?: any) {
+  async hashPage(hashValue: any, lastValue?: string) {
     return queryPage(
       {
         TableName: this.tableName,
@@ -408,7 +416,12 @@ class DDBHandler {
       lastValue
     );
   }
-  async indexPage(indexName: string, key: string, value: any, lastValue?: any) {
+  async indexPage(
+    indexName: string,
+    key: string,
+    value: any,
+    lastValue?: string
+  ) {
     return queryPage(
       {
         ...withSecondaryIndex(key, value, indexName),
@@ -421,7 +434,7 @@ class DDBHandler {
     hashValue: any,
     f: (item: DynamoDB.DocumentClient.AttributeMap) => boolean
   ): Promise<DynamoDB.DocumentClient.AttributeMap> {
-    let temp: DynamoDB.DocumentClient.Key;
+    let temp: string | undefined;
     do {
       const [items, lastIndex] = await this.hashPage(hashValue, temp);
       for (const i of items) if (f(i)) return i;
@@ -442,7 +455,7 @@ class DDBHandler {
     value: any,
     f: (item: DynamoDB.DocumentClient.AttributeMap) => boolean
   ) {
-    let temp: DynamoDB.DocumentClient.Key;
+    let temp: string | undefined;
     do {
       const [items, lastIndex] = await this.indexPage(
         indexName,
