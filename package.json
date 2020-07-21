@@ -9,7 +9,7 @@
   "license": "MIT",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && typedoc --readme none --mode file --excludeNotExported && git commit docs -m \"docs: updating docs\"",
+    "build": "tsc && typedoc --readme none --mode file --excludeNotExported --includeVersion && git commit docs -m \"docs: updating docs\" && git push",
     "watch": "livelink watch",
     "prepublishOnly": "yarn build"
   },
