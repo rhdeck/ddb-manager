@@ -46,7 +46,7 @@
 
 Ƭ **filterFunc**: *function*
 
-*Defined in [src/index.ts:4](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L4)*
+*Defined in [src/index.ts:4](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L4)*
 
 #### Type declaration:
 
@@ -64,7 +64,7 @@ Name | Type |
 
 • **savedDDB**: *DocumentClient | undefined*
 
-*Defined in [src/index.ts:9](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L9)*
+*Defined in [src/index.ts:9](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L9)*
 
 ## Functions
 
@@ -72,7 +72,7 @@ Name | Type |
 
 ▸ **ddb**(): *DocumentClient‹›*
 
-*Defined in [src/index.ts:13](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L13)*
+*Defined in [src/index.ts:13](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L13)*
 
 **Returns:** *DocumentClient‹›*
 
@@ -82,7 +82,7 @@ ___
 
 ▸ **hashMap**‹**T**›(`hashKey`: string, `hashValue`: DynamoDB.DocumentClient.Key, `TableName`: string, `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:157](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L157)*
+*Defined in [src/index.ts:157](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L157)*
 
 **Type parameters:**
 
@@ -114,7 +114,7 @@ ___
 
 ▸ **hashReduce**‹**T**›(`hashKey`: string, `hashValue`: DynamoDB.DocumentClient.Key, `TableName`: string, `f`: function, `start`: T, `limit`: number): *Promise‹T›*
 
-*Defined in [src/index.ts:165](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L165)*
+*Defined in [src/index.ts:165](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L165)*
 
 **Type parameters:**
 
@@ -150,7 +150,7 @@ ___
 
 ▸ **queryAll**(`params`: QueryInput): *Promise‹DynamoDB.DocumentClient.AttributeMap[]›*
 
-*Defined in [src/index.ts:217](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L217)*
+*Defined in [src/index.ts:217](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L217)*
 
 **Parameters:**
 
@@ -166,7 +166,7 @@ ___
 
 ▸ **queryCount**(`params`: QueryInput): *Promise‹number›*
 
-*Defined in [src/index.ts:204](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L204)*
+*Defined in [src/index.ts:204](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L204)*
 
 **Parameters:**
 
@@ -182,7 +182,7 @@ ___
 
 ▸ **queryMap**‹**T**›(`o`: [queryOptions](interfaces/queryoptions.md), `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:91](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L91)*
+*Defined in [src/index.ts:91](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L91)*
 
 **Type parameters:**
 
@@ -210,7 +210,7 @@ ___
 
 ▸ **queryMapSerial**‹**T**›(`o`: [queryOptions](interfaces/queryoptions.md), `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:105](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L105)*
+*Defined in [src/index.ts:105](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L105)*
 
 **Type parameters:**
 
@@ -238,7 +238,7 @@ ___
 
 ▸ **queryPage**(`TableNameOrOptions`: [queryOptions](interfaces/queryoptions.md), `lastKey?`: DynamoDB.DocumentClient.Key | string | undefined): *Promise‹[DynamoDB.DocumentClient.ItemList, string]›*
 
-*Defined in [src/index.ts:73](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L73)*
+*Defined in [src/index.ts:73](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L73)*
 
 **Parameters:**
 
@@ -255,7 +255,7 @@ ___
 
 ▸ **queryReduce**‹**T**›(`params`: QueryInput, `f`: function, `start`: T, `limit`: number): *Promise‹T›*
 
-*Defined in [src/index.ts:122](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L122)*
+*Defined in [src/index.ts:122](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L122)*
 
 **Type parameters:**
 
@@ -290,7 +290,7 @@ ___
 
 ▸ **scanAll**(`params`: [queryOptions](interfaces/queryoptions.md)): *Promise‹DynamoDB.DocumentClient.AttributeMap[]›*
 
-*Defined in [src/index.ts:19](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L19)*
+*Defined in [src/index.ts:19](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L19)*
 
 **Parameters:**
 
@@ -306,7 +306,7 @@ ___
 
 ▸ **scanMap**‹**T**›(`o`: [queryOptions](interfaces/queryoptions.md), `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:24](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L24)*
+*Defined in [src/index.ts:24](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L24)*
 
 **Type parameters:**
 
@@ -334,7 +334,7 @@ ___
 
 ▸ **scanMapSerial**‹**T**›(`o`: [queryOptions](interfaces/queryoptions.md), `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:38](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L38)*
+*Defined in [src/index.ts:38](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L38)*
 
 **Type parameters:**
 
@@ -362,7 +362,7 @@ ___
 
 ▸ **scanPage**(`o`: [queryOptions](interfaces/queryoptions.md), `lastKey?`: string | DynamoDB.DocumentClient.Key | undefined): *Promise‹[DynamoDB.DocumentClient.ItemList, string]›*
 
-*Defined in [src/index.ts:55](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L55)*
+*Defined in [src/index.ts:55](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L55)*
 
 **Parameters:**
 
@@ -379,7 +379,7 @@ ___
 
 ▸ **secondaryIndexMap**‹**T**›(`key`: string, `value`: any, `indexName`: string, `TableName`: string, `f`: function, `limit`: number): *Promise‹T[]›*
 
-*Defined in [src/index.ts:193](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L193)*
+*Defined in [src/index.ts:193](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L193)*
 
 **Type parameters:**
 
@@ -415,7 +415,7 @@ ___
 
 ▸ **setDDB**(`newDDB`: DocumentClient): *void*
 
-*Defined in [src/index.ts:10](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L10)*
+*Defined in [src/index.ts:10](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L10)*
 
 **Parameters:**
 
@@ -431,7 +431,7 @@ ___
 
 ▸ **withHash**(`hashKey`: string, `hashValue`: DynamoDB.DocumentClient.Key): *object*
 
-*Defined in [src/index.ts:143](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L143)*
+*Defined in [src/index.ts:143](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L143)*
 
 **Parameters:**
 
@@ -450,7 +450,7 @@ ___
 
 ▸ **withSecondaryIndex**(`key`: string, `value`: any, `IndexName`: string): *object*
 
-*Defined in [src/index.ts:180](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L180)*
+*Defined in [src/index.ts:180](https://github.com/rhdeck/ddb-manager/blob/a2fecd0/src/index.ts#L180)*
 
 **Parameters:**
 
