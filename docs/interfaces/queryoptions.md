@@ -240,7 +240,7 @@ ___
 
 • **limit**? : *number*
 
-*Defined in [src/index.ts:7](https://github.com/rhdeck/ddb-manager/blob/d625ce8/src/index.ts#L7)*
+*Defined in [src/index.ts:7](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L7)*
 
 ___
 
@@ -248,4 +248,4 @@ ___
 
 • **tableName**? : *string*
 
-*Defined in [src/index.ts:6](https://github.com/rhdeck/ddb-manager/blob/d625ce8/src/index.ts#L6)*
+*Defined in [src/index.ts:6](https://github.com/rhdeck/ddb-manager/blob/a4cee92/src/index.ts#L6)*
