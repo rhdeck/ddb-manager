@@ -18,12 +18,12 @@ const ddb = () => {
 };
 const scanAll = async (
   params: queryOptions
-): Promise<DynamoDB.DocumentClient.AttributeMap[]> => {
+): Promise<{ [key: string]: any }[]> => {
   return await scanMap(params, (o) => o);
 };
 const scanMap = async <T>(
   o: queryOptions,
-  f: (item: DynamoDB.DocumentClient.AttributeMap) => T
+  f: (item: { [key: string]: any }) => T
 ): Promise<T[]> => {
   let lastKey: string;
   let out: T[] = [];
@@ -37,7 +37,7 @@ const scanMap = async <T>(
 };
 const scanMapSerial = async <T>(
   o: queryOptions,
-  f: (item: DynamoDB.DocumentClient.AttributeMap) => T
+  f: (item: { [key: string]: any }) => T
 ): Promise<T[]> => {
   let lastKey: string;
   let out: any[] = [];
@@ -55,7 +55,7 @@ const scanMapSerial = async <T>(
 const scanPage = async (
   o: queryOptions,
   lastKey?: string | DynamoDB.DocumentClient.Key | undefined
-): Promise<[DynamoDB.DocumentClient.ItemList, string]> => {
+): Promise<[{ [key: string]: any }[], string]> => {
   const { tableName, limit: l = 0, ...rest } = o;
   const TableName = tableName ? tableName : rest.TableName;
   const limit = l;
@@ -73,7 +73,7 @@ const scanPage = async (
 const queryPage = async (
   TableNameOrOptions: queryOptions,
   lastKey?: DynamoDB.DocumentClient.Key | string | undefined
-): Promise<[DynamoDB.DocumentClient.ItemList, string]> => {
+): Promise<[{ [key: string]: any }[], string]> => {
   const { tableName, limit: l = 0, ...rest } = TableNameOrOptions;
   const TableName = tableName ? tableName : rest.TableName;
   const limit = l;
@@ -90,7 +90,7 @@ const queryPage = async (
 };
 const queryMap = async <T>(
   o: queryOptions,
-  f: (item: DynamoDB.DocumentClient.AttributeMap) => Promise<T> | T
+  f: (item: { [key: string]: any }) => Promise<T> | T
 ) => {
   let lastKey: string;
   let out: T[] = [];
@@ -104,7 +104,7 @@ const queryMap = async <T>(
 };
 const queryMapSerial = async <T>(
   o: queryOptions,
-  f: (item: DynamoDB.DocumentClient.AttributeMap) => T
+  f: (item: { [key: string]: any }) => T
 ) => {
   let lastKey: string;
   let out: T[] = [];
@@ -123,9 +123,9 @@ const queryReduce = async <T>(
   params: DynamoDB.DocumentClient.QueryInput,
   f: (
     previousValue: T,
-    currentValue: DynamoDB.DocumentClient.AttributeMap,
+    currentValue: { [key: string]: any },
     currentIndex: number,
-    array: DynamoDB.DocumentClient.ItemList
+    array: { [key: string]: any }[]
   ) => T,
   start: T,
   limit: number = 0
@@ -158,7 +158,7 @@ const hashMap = async <T>(
   hashKey: string,
   hashValue: DynamoDB.DocumentClient.Key,
   TableName: string,
-  f: (item: DynamoDB.DocumentClient.AttributeMap) => T
+  f: (item: { [key: string]: any }) => T
 ) => {
   return queryMap({ ...withHash(hashKey, hashValue), TableName }, f);
 };
@@ -166,7 +166,7 @@ const hashReduce = async <T>(
   hashKey: string,
   hashValue: DynamoDB.DocumentClient.Key,
   TableName: string,
-  f: (item: DynamoDB.DocumentClient.AttributeMap) => T,
+  f: (item: { [key: string]: any }) => T,
   start: T,
   limit: number = 0
 ) => {
@@ -195,7 +195,7 @@ const secondaryIndexMap = async <T>(
   value: any,
   indexName: string,
   TableName: string,
-  f: (item: DynamoDB.DocumentClient.AttributeMap) => Promise<T> | T,
+  f: (item: { [key: string]: any }) => Promise<T> | T,
   limit = 0
 ) => {
   const p = { ...withSecondaryIndex(key, value, indexName), TableName };
@@ -216,8 +216,7 @@ const queryCount = async (
 };
 const queryAll = async (
   params: DynamoDB.DocumentClient.QueryInput
-): Promise<DynamoDB.DocumentClient.AttributeMap[]> =>
-  queryMap(params, (item) => item);
+): Promise<{ [key: string]: any }[]> => queryMap(params, (item) => item);
 class DDBHandler {
   protected tableName: string;
   public cachedValues: { [key: string]: any } = {};
@@ -359,7 +358,7 @@ class DDBHandler {
     }
     return this.loadFromItem(Item);
   }
-  loadFromItem(Item: DynamoDB.DocumentClient.AttributeMap) {
+  loadFromItem(Item: { [key: string]: any }) {
     this.cachedValues = { ...Item };
     this.exists = typeof Item != "undefined";
     this.loaded = true;
@@ -376,25 +375,21 @@ class DDBHandler {
   async all() {
     return scanAll({ TableName: this.tableName });
   }
-  async map<T>(
-    f: (item: DynamoDB.DocumentClient.AttributeMap) => T
-  ): Promise<T[]> {
+  async map<T>(f: (item: { [key: string]: any }) => T): Promise<T[]> {
     return scanMap({ TableName: this.tableName }, f);
   }
-  async mapSerial<T>(
-    f: (item: DynamoDB.DocumentClient.AttributeMap) => T
-  ): Promise<T[]> {
+  async mapSerial<T>(f: (item: { [key: string]: any }) => T): Promise<T[]> {
     return scanMapSerial({ TableName: this.tableName }, f);
   }
   async hashMap<T>(
     hashValue: any,
-    f: (item: DynamoDB.DocumentClient.AttributeMap) => T
+    f: (item: { [key: string]: any }) => T
   ): Promise<T[]> {
     return hashMap(this.hashKey(), hashValue, this.tableName, f);
   }
   async hashReduce<T>(
     hashValue: any,
-    f: (item: DynamoDB.DocumentClient.AttributeMap) => T,
+    f: (item: { [key: string]: any }) => T,
     start: T
   ): Promise<T> {
     return hashReduce(this.hashKey(), hashValue, this.tableName, f, start);
@@ -403,7 +398,7 @@ class DDBHandler {
     key: string,
     value: any,
     indexName: string,
-    f: (item: DynamoDB.DocumentClient.AttributeMap) => Promise<T> | T
+    f: (item: { [key: string]: any }) => Promise<T> | T
   ): Promise<T[]> {
     return secondaryIndexMap(key, value, indexName, this.tableName, f);
   }
@@ -432,8 +427,8 @@ class DDBHandler {
   }
   async hashFind(
     hashValue: any,
-    f: (item: DynamoDB.DocumentClient.AttributeMap) => boolean
-  ): Promise<DynamoDB.DocumentClient.AttributeMap> {
+    f: (item: { [key: string]: any }) => boolean
+  ): Promise<{ [key: string]: any }> {
     let temp: string | undefined;
     do {
       const [items, lastIndex] = await this.hashPage(hashValue, temp);
@@ -442,10 +437,7 @@ class DDBHandler {
     } while (temp);
     return null;
   }
-  async hashSome(
-    hashValue: any,
-    f: (item: DynamoDB.DocumentClient.AttributeMap) => boolean
-  ) {
+  async hashSome(hashValue: any, f: (item: { [key: string]: any }) => boolean) {
     const item = await this.hashFind(hashValue, f);
     return item !== null;
   }
@@ -453,7 +445,7 @@ class DDBHandler {
     indexName: string,
     key: string,
     value: any,
-    f: (item: DynamoDB.DocumentClient.AttributeMap) => boolean
+    f: (item: { [key: string]: any }) => boolean
   ) {
     let temp: string | undefined;
     do {
@@ -472,7 +464,7 @@ class DDBHandler {
     indexName: string,
     key: string,
     value: any,
-    f: (item: DynamoDB.DocumentClient.AttributeMap) => boolean
+    f: (item: { [key: string]: any }) => boolean
   ) {
     const item = await this.indexFind(indexName, key, value, f);
     return item !== null;
