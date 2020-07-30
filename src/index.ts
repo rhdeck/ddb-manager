@@ -68,7 +68,7 @@ const scanPage = async (
     })
     .promise();
   if (limit && Items.length > limit - 1) return [Items, undefined];
-  return [Items, LastEvaluatedKey.toString()];
+  return [Items, LastEvaluatedKey && LastEvaluatedKey.toString()];
 };
 const queryPage = async (
   TableNameOrOptions: queryOptions,
@@ -86,7 +86,7 @@ const queryPage = async (
     })
     .promise();
   if (limit && Items.length > limit - 1) return [Items, undefined];
-  return [Items, LastEvaluatedKey.toString()];
+  return [Items, LastEvaluatedKey && LastEvaluatedKey.toString()];
 };
 const queryMap = async <T>(
   o: queryOptions,
