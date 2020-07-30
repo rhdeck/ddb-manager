@@ -9,13 +9,14 @@
   "license": "MIT",
   "scripts": {
     "test": "tsc --noEmit",
-    "build": "tsc && typedoc --readme none --mode file --excludeNotExported --includeVersion && git commit docs -m \"docs: updating docs\" && git push",
-    "watch": "livelink watch",
-    "prepublishOnly": "yarn build"
+    "build": "tsc",
+    "docs": "typedoc --theme markdown --readme none --mode file --excludeNotExported --includeVersion --out docstemp && rm README.md ; concat-md docstemp > README.md && rm -rf docstemp",
+    "prepublishOnly": "yarn build && yarn docs && git commit README.md -m \"docs: updating docs\" && git push"
   },
   "devDependencies": {
     "@raydeck/livelink": "^1.5.2",
     "@types/node": "^14.0.22",
+    "concat-md": "^0.3.5",
     "eslint": "^7.0.0",
     "typedoc": "^0.17.8",
     "typedoc-plugin-markdown": "^2.3.1",
