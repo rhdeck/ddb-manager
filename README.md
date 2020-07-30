@@ -1,9 +1,9 @@
 
 <a name="readmemd"></a>
 
-[@raydeck/ddb-manager - v2.1.6](#readmemd)
+[@raydeck/ddb-manager - v2.1.7](#readmemd)
 
-# @raydeck/ddb-manager - v2.1.6
+# @raydeck/ddb-manager - v2.1.7
 
 ## Index
 
@@ -49,7 +49,7 @@
 
 Ƭ **filterFunc**: *function*
 
-*Defined in [src/index.ts:4](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L4)*
+*Defined in [src/index.ts:4](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L4)*
 
 #### Type declaration:
 
@@ -67,7 +67,7 @@ Name | Type |
 
 • **savedDDB**: *DocumentClient | undefined*
 
-*Defined in [src/index.ts:9](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L9)*
+*Defined in [src/index.ts:9](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L9)*
 
 ## Functions
 
@@ -75,7 +75,7 @@ Name | Type |
 
 ▸ **ddb**(): *DocumentClient‹›*
 
-*Defined in [src/index.ts:13](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L13)*
+*Defined in [src/index.ts:13](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L13)*
 
 **Returns:** *DocumentClient‹›*
 
@@ -85,7 +85,7 @@ ___
 
 ▸ **hashMap**‹**T**›(`hashKey`: string, `hashValue`: DynamoDB.DocumentClient.Key, `TableName`: string, `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:157](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L157)*
+*Defined in [src/index.ts:157](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L157)*
 
 **Type parameters:**
 
@@ -117,7 +117,7 @@ ___
 
 ▸ **hashReduce**‹**T**›(`hashKey`: string, `hashValue`: DynamoDB.DocumentClient.Key, `TableName`: string, `f`: function, `start`: T, `limit`: number): *Promise‹T›*
 
-*Defined in [src/index.ts:165](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L165)*
+*Defined in [src/index.ts:165](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L165)*
 
 **Type parameters:**
 
@@ -153,7 +153,7 @@ ___
 
 ▸ **queryAll**(`params`: QueryInput): *Promise‹object[]›*
 
-*Defined in [src/index.ts:217](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L217)*
+*Defined in [src/index.ts:217](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L217)*
 
 **Parameters:**
 
@@ -169,7 +169,7 @@ ___
 
 ▸ **queryCount**(`params`: QueryInput): *Promise‹number›*
 
-*Defined in [src/index.ts:204](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L204)*
+*Defined in [src/index.ts:204](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L204)*
 
 **Parameters:**
 
@@ -185,7 +185,7 @@ ___
 
 ▸ **queryMap**‹**T**›(`o`: [queryOptions](#interfacesqueryoptionsmd), `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:91](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L91)*
+*Defined in [src/index.ts:91](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L91)*
 
 **Type parameters:**
 
@@ -213,7 +213,7 @@ ___
 
 ▸ **queryMapSerial**‹**T**›(`o`: [queryOptions](#interfacesqueryoptionsmd), `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:105](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L105)*
+*Defined in [src/index.ts:105](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L105)*
 
 **Type parameters:**
 
@@ -241,7 +241,7 @@ ___
 
 ▸ **queryPage**(`TableNameOrOptions`: [queryOptions](#interfacesqueryoptionsmd), `lastKey?`: DynamoDB.DocumentClient.Key | string | undefined): *Promise‹[object[], string]›*
 
-*Defined in [src/index.ts:73](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L73)*
+*Defined in [src/index.ts:73](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L73)*
 
 **Parameters:**
 
@@ -258,7 +258,7 @@ ___
 
 ▸ **queryReduce**‹**T**›(`params`: QueryInput, `f`: function, `start`: T, `limit`: number): *Promise‹T›*
 
-*Defined in [src/index.ts:122](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L122)*
+*Defined in [src/index.ts:122](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L122)*
 
 **Type parameters:**
 
@@ -293,7 +293,7 @@ ___
 
 ▸ **scanAll**(`params`: [queryOptions](#interfacesqueryoptionsmd)): *Promise‹object[]›*
 
-*Defined in [src/index.ts:19](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L19)*
+*Defined in [src/index.ts:19](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L19)*
 
 **Parameters:**
 
@@ -309,7 +309,7 @@ ___
 
 ▸ **scanMap**‹**T**›(`o`: [queryOptions](#interfacesqueryoptionsmd), `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:24](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L24)*
+*Defined in [src/index.ts:24](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L24)*
 
 **Type parameters:**
 
@@ -337,7 +337,7 @@ ___
 
 ▸ **scanMapSerial**‹**T**›(`o`: [queryOptions](#interfacesqueryoptionsmd), `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:38](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L38)*
+*Defined in [src/index.ts:38](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L38)*
 
 **Type parameters:**
 
@@ -365,7 +365,7 @@ ___
 
 ▸ **scanPage**(`o`: [queryOptions](#interfacesqueryoptionsmd), `lastKey?`: string | DynamoDB.DocumentClient.Key | undefined): *Promise‹[object[], string]›*
 
-*Defined in [src/index.ts:55](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L55)*
+*Defined in [src/index.ts:55](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L55)*
 
 **Parameters:**
 
@@ -382,7 +382,7 @@ ___
 
 ▸ **secondaryIndexMap**‹**T**›(`key`: string, `value`: any, `indexName`: string, `TableName`: string, `f`: function, `limit`: number): *Promise‹T[]›*
 
-*Defined in [src/index.ts:193](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L193)*
+*Defined in [src/index.ts:193](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L193)*
 
 **Type parameters:**
 
@@ -418,7 +418,7 @@ ___
 
 ▸ **setDDB**(`newDDB`: DocumentClient): *void*
 
-*Defined in [src/index.ts:10](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L10)*
+*Defined in [src/index.ts:10](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L10)*
 
 **Parameters:**
 
@@ -434,7 +434,7 @@ ___
 
 ▸ **withHash**(`hashKey`: string, `hashValue`: DynamoDB.DocumentClient.Key): *object*
 
-*Defined in [src/index.ts:143](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L143)*
+*Defined in [src/index.ts:143](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L143)*
 
 **Parameters:**
 
@@ -453,7 +453,7 @@ ___
 
 ▸ **withSecondaryIndex**(`key`: string, `value`: any, `IndexName`: string): *object*
 
-*Defined in [src/index.ts:180](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L180)*
+*Defined in [src/index.ts:180](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L180)*
 
 **Parameters:**
 
@@ -480,7 +480,7 @@ Name | Type |
 
 <a name="classesddbhandlermd"></a>
 
-[@raydeck/ddb-manager - v2.1.6](#readmemd) › [DDBHandler](#classesddbhandlermd)
+[@raydeck/ddb-manager - v2.1.7](#readmemd) › [DDBHandler](#classesddbhandlermd)
 
 # Class: DDBHandler
 
@@ -536,7 +536,7 @@ Name | Type |
 
 \+ **new DDBHandler**(`tableName`: string, `hashKey`: string): *[DDBHandler](#classesddbhandlermd)*
 
-*Defined in [src/index.ts:226](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L226)*
+*Defined in [src/index.ts:226](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L226)*
 
 **Parameters:**
 
@@ -553,7 +553,7 @@ Name | Type | Default |
 
 • **_hashKey**: *string*
 
-*Defined in [src/index.ts:223](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L223)*
+*Defined in [src/index.ts:223](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L223)*
 
 ___
 
@@ -561,7 +561,7 @@ ___
 
 • **cachedValues**: *object*
 
-*Defined in [src/index.ts:222](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L222)*
+*Defined in [src/index.ts:222](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L222)*
 
 #### Type declaration:
 
@@ -573,7 +573,7 @@ ___
 
 • **exists**: *boolean* = false
 
-*Defined in [src/index.ts:225](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L225)*
+*Defined in [src/index.ts:225](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L225)*
 
 ___
 
@@ -581,7 +581,7 @@ ___
 
 • **id**: *object*
 
-*Defined in [src/index.ts:224](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L224)*
+*Defined in [src/index.ts:224](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L224)*
 
 #### Type declaration:
 
@@ -591,7 +591,7 @@ ___
 
 • **loaded**: *boolean* = false
 
-*Defined in [src/index.ts:226](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L226)*
+*Defined in [src/index.ts:226](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L226)*
 
 ___
 
@@ -599,7 +599,7 @@ ___
 
 • **tableName**: *string*
 
-*Defined in [src/index.ts:221](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L221)*
+*Defined in [src/index.ts:221](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L221)*
 
 ## Methods
 
@@ -607,7 +607,7 @@ ___
 
 ▸ **_create**(`o`: object, `id`: any, `options`: object): *Promise‹this›*
 
-*Defined in [src/index.ts:316](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L316)*
+*Defined in [src/index.ts:316](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L316)*
 
 **Parameters:**
 
@@ -625,7 +625,7 @@ ___
 
 ▸ **_update**(`updates`: object): *Promise‹this›*
 
-*Defined in [src/index.ts:271](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L271)*
+*Defined in [src/index.ts:271](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L271)*
 
 **Parameters:**
 
@@ -641,7 +641,7 @@ ___
 
 ▸ **all**(): *Promise‹object[]›*
 
-*Defined in [src/index.ts:375](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L375)*
+*Defined in [src/index.ts:375](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L375)*
 
 **Returns:** *Promise‹object[]›*
 
@@ -651,7 +651,7 @@ ___
 
 ▸ **delete**(`key?`: string | object): *Promise‹void›*
 
-*Defined in [src/index.ts:367](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L367)*
+*Defined in [src/index.ts:367](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L367)*
 
 **Parameters:**
 
@@ -667,7 +667,7 @@ ___
 
 ▸ **get**‹**T**›(`key`: string, `def?`: T): *T | undefined*
 
-*Defined in [src/index.ts:340](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L340)*
+*Defined in [src/index.ts:340](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L340)*
 
 **Type parameters:**
 
@@ -688,7 +688,7 @@ ___
 
 ▸ **has**(`key`: string): *boolean*
 
-*Defined in [src/index.ts:343](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L343)*
+*Defined in [src/index.ts:343](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L343)*
 
 **Parameters:**
 
@@ -704,7 +704,7 @@ ___
 
 ▸ **hashFind**(`hashValue`: any, `f`: function): *Promise‹object›*
 
-*Defined in [src/index.ts:428](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L428)*
+*Defined in [src/index.ts:428](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L428)*
 
 **Parameters:**
 
@@ -728,7 +728,7 @@ ___
 
 ▸ **hashKey**(): *string*
 
-*Defined in [src/index.ts:234](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L234)*
+*Defined in [src/index.ts:234](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L234)*
 
 **Returns:** *string*
 
@@ -738,7 +738,7 @@ ___
 
 ▸ **hashMap**‹**T**›(`hashValue`: any, `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:384](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L384)*
+*Defined in [src/index.ts:384](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L384)*
 
 **Type parameters:**
 
@@ -766,7 +766,7 @@ ___
 
 ▸ **hashPage**(`hashValue`: any, `lastValue?`: string): *Promise‹[object[], string]›*
 
-*Defined in [src/index.ts:405](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L405)*
+*Defined in [src/index.ts:405](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L405)*
 
 **Parameters:**
 
@@ -783,7 +783,7 @@ ___
 
 ▸ **hashReduce**‹**T**›(`hashValue`: any, `f`: function, `start`: T): *Promise‹T›*
 
-*Defined in [src/index.ts:390](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L390)*
+*Defined in [src/index.ts:390](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L390)*
 
 **Type parameters:**
 
@@ -813,7 +813,7 @@ ___
 
 ▸ **hashSome**(`hashValue`: any, `f`: function): *Promise‹boolean›*
 
-*Defined in [src/index.ts:440](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L440)*
+*Defined in [src/index.ts:440](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L440)*
 
 **Parameters:**
 
@@ -837,7 +837,7 @@ ___
 
 ▸ **indexFind**(`indexName`: string, `key`: string, `value`: any, `f`: function): *Promise‹object›*
 
-*Defined in [src/index.ts:444](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L444)*
+*Defined in [src/index.ts:444](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L444)*
 
 **Parameters:**
 
@@ -865,7 +865,7 @@ ___
 
 ▸ **indexPage**(`indexName`: string, `key`: string, `value`: any, `lastValue?`: string): *Promise‹[object[], string]›*
 
-*Defined in [src/index.ts:414](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L414)*
+*Defined in [src/index.ts:414](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L414)*
 
 **Parameters:**
 
@@ -884,7 +884,7 @@ ___
 
 ▸ **indexSome**(`indexName`: string, `key`: string, `value`: any, `f`: function): *Promise‹boolean›*
 
-*Defined in [src/index.ts:463](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L463)*
+*Defined in [src/index.ts:463](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L463)*
 
 **Parameters:**
 
@@ -912,7 +912,7 @@ ___
 
 ▸ **load**(`o`: any): *Promise‹this›*
 
-*Defined in [src/index.ts:346](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L346)*
+*Defined in [src/index.ts:346](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L346)*
 
 **Parameters:**
 
@@ -928,7 +928,7 @@ ___
 
 ▸ **loadFromItem**(`Item`: object): *this*
 
-*Defined in [src/index.ts:361](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L361)*
+*Defined in [src/index.ts:361](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L361)*
 
 **Parameters:**
 
@@ -944,7 +944,7 @@ ___
 
 ▸ **map**‹**T**›(`f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:378](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L378)*
+*Defined in [src/index.ts:378](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L378)*
 
 **Type parameters:**
 
@@ -970,7 +970,7 @@ ___
 
 ▸ **mapSerial**‹**T**›(`f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:381](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L381)*
+*Defined in [src/index.ts:381](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L381)*
 
 **Type parameters:**
 
@@ -996,7 +996,7 @@ ___
 
 ▸ **processUpdates**(`updates`: object): *[string, any][]*
 
-*Defined in [src/index.ts:243](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L243)*
+*Defined in [src/index.ts:243](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L243)*
 
 **Parameters:**
 
@@ -1012,7 +1012,7 @@ ___
 
 ▸ **secondaryIndexMap**‹**T**›(`key`: string, `value`: any, `indexName`: string, `f`: function): *Promise‹T[]›*
 
-*Defined in [src/index.ts:397](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L397)*
+*Defined in [src/index.ts:397](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L397)*
 
 **Type parameters:**
 
@@ -1044,7 +1044,7 @@ ___
 
 ▸ **set**(`key`: string, `value`: any): *Promise‹void›*
 
-*Defined in [src/index.ts:237](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L237)*
+*Defined in [src/index.ts:237](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L237)*
 
 **Parameters:**
 
@@ -1061,7 +1061,7 @@ ___
 
 ▸ **setId**(`id`: string | object): *void*
 
-*Defined in [src/index.ts:231](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L231)*
+*Defined in [src/index.ts:231](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L231)*
 
 **Parameters:**
 
@@ -1077,7 +1077,7 @@ ___
 
 ▸ **setValues**(`o`: object): *Promise‹void›*
 
-*Defined in [src/index.ts:240](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L240)*
+*Defined in [src/index.ts:240](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L240)*
 
 **Parameters:**
 
@@ -1090,7 +1090,7 @@ Name | Type |
 
 <a name="interfacesqueryoptionsmd"></a>
 
-[@raydeck/ddb-manager - v2.1.6](#readmemd) › [queryOptions](#interfacesqueryoptionsmd)
+[@raydeck/ddb-manager - v2.1.7](#readmemd) › [queryOptions](#interfacesqueryoptionsmd)
 
 # Interface: queryOptions
 
@@ -1332,7 +1332,7 @@ ___
 
 • **limit**? : *number*
 
-*Defined in [src/index.ts:7](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L7)*
+*Defined in [src/index.ts:7](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L7)*
 
 ___
 
@@ -1340,4 +1340,4 @@ ___
 
 • **tableName**? : *string*
 
-*Defined in [src/index.ts:6](https://github.com/rhdeck/ddb-manager/blob/8f0017e/src/index.ts#L6)*
+*Defined in [src/index.ts:6](https://github.com/rhdeck/ddb-manager/blob/47b24c4/src/index.ts#L6)*
