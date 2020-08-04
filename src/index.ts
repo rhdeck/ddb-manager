@@ -70,23 +70,44 @@ const scanPage = async (
   if (limit && Items.length > limit - 1) return [Items, undefined];
   return [Items, LastEvaluatedKey && LastEvaluatedKey.toString()];
 };
+
 const queryPage = async (
-  TableNameOrOptions: queryOptions,
-  lastKey?: DynamoDB.DocumentClient.Key | string | undefined
+  {
+    TableName,
+    Key,
+    Value,
+    IndexName,
+    isReversed = false,
+    Limit = 50,
+  }: {
+    TableName: string;
+    Key: string;
+    Value: string | number;
+    IndexName?: string;
+    isReversed?: boolean;
+    Limit?: number;
+  },
+  lastKeyJson?: string
 ): Promise<[{ [key: string]: any }[], string]> => {
-  const { tableName, limit: l = 0, ...rest } = TableNameOrOptions;
-  const TableName = tableName ? tableName : rest.TableName;
-  const limit = l;
-  const params = rest;
-  let { Items, LastEvaluatedKey } = await ddb()
-    .query({
-      ExclusiveStartKey: <DynamoDB.DocumentClient.Key>lastKey,
-      TableName,
-      ...params,
-    })
-    .promise();
-  if (limit && Items.length > limit - 1) return [Items, undefined];
-  return [Items, LastEvaluatedKey && LastEvaluatedKey.toString()];
+  const params: DocumentClient.QueryInput = {
+    TableName,
+    KeyConditionExpression: `#key=:value`,
+    ExpressionAttributeNames: {
+      "#key": Key,
+    },
+    ExpressionAttributeValues: {
+      ":value": Value,
+    },
+    ScanIndexForward: !isReversed,
+    Limit,
+  };
+  if (IndexName) params.IndexName = IndexName;
+  if (lastKeyJson) {
+    params.ExclusiveStartKey = JSON.parse(lastKeyJson);
+  }
+  console.log("query params>", JSON.stringify(params, null, 2));
+  let { Items, LastEvaluatedKey } = await ddb().query(params).promise();
+  return [Items, LastEvaluatedKey && JSON.stringify(LastEvaluatedKey)];
 };
 const queryMap = async <T>(
   o: queryOptions,
