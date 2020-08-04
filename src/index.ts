@@ -108,8 +108,8 @@ class DDBHandler {
   /**
    * Set id (primary key) of an item
    *
-   * Id should be an object for a composite primary key
    * @param id Item primary key
+   * Id should be an object for a composite primary key
    */
   setId(id: string | {}) {
     this.id = typeof id === "object" ? id : { id };
@@ -309,7 +309,7 @@ class DDBHandler {
     return;
   }
   /**
-   * Run paginated query for partition key
+   * Run paginated query against partition key
    * @param hashValue Value of items partition key
    * @param lastValue Specifies where to start query. Undefined returned when no more items found
    */
@@ -324,7 +324,7 @@ class DDBHandler {
     );
   }
   /**
-   * Run paginated query for global or secondary index
+   * Run paginated query against global or secondary index
    * @param indexName Name of global or secondary index
    * @param key Partition (or sort) key to search against
    * @param value Value an items "Key" should have
