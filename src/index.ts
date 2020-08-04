@@ -1,11 +1,6 @@
 import { DynamoDB } from "aws-sdk";
 import { createHash } from "crypto";
-import { UpdateItemInput, DocumentClient } from "aws-sdk/clients/dynamodb";
-type filterFunc = (arg: any) => boolean;
-interface queryOptions extends DynamoDB.DocumentClient.QueryInput {
-  tableName?: string;
-  limit?: number;
-}
+import { UpdateItemInput } from "aws-sdk/clients/dynamodb";
 let savedDDB: DynamoDB.DocumentClient | undefined;
 const setDDB = (newDDB: DynamoDB.DocumentClient) => {
   savedDDB = newDDB;
@@ -16,61 +11,6 @@ const ddb = () => {
   }
   return savedDDB;
 };
-const scanAll = async (
-  params: queryOptions
-): Promise<{ [key: string]: any }[]> => {
-  return await scanMap(params, (o) => o);
-};
-const scanMap = async <T>(
-  o: queryOptions,
-  f: (item: { [key: string]: any }) => T
-): Promise<T[]> => {
-  let lastKey: string;
-  let out: T[] = [];
-  do {
-    const [arr, temp] = await scanPage(o, lastKey);
-    out = [...out, ...(await Promise.all(arr.map(f)))];
-    if (o.limit && arr.length > o.limit - 1) break;
-    lastKey = temp;
-  } while (lastKey);
-  return out;
-};
-const scanMapSerial = async <T>(
-  o: queryOptions,
-  f: (item: { [key: string]: any }) => T
-): Promise<T[]> => {
-  let lastKey: string;
-  let out: any[] = [];
-  doloop: do {
-    const [arr, temp] = await scanPage(o, lastKey);
-    for (const item of arr) {
-      const temp = f(item);
-      out.push(temp);
-      if (o.limit && out.length > o.limit - 1) break doloop;
-    }
-    lastKey = temp;
-  } while (lastKey);
-  return out;
-};
-const scanPage = async (
-  o: queryOptions,
-  lastKey?: string | DynamoDB.DocumentClient.Key | undefined
-): Promise<[{ [key: string]: any }[], string]> => {
-  const { tableName, limit: l = 0, ...rest } = o;
-  const TableName = tableName ? tableName : rest.TableName;
-  const limit = l;
-  const params = rest;
-  let { Items, LastEvaluatedKey } = await ddb()
-    .scan({
-      ExclusiveStartKey: <DynamoDB.DocumentClient.Key>lastKey,
-      TableName,
-      ...params,
-    })
-    .promise();
-  if (limit && Items.length > limit - 1) return [Items, undefined];
-  return [Items, LastEvaluatedKey && LastEvaluatedKey.toString()];
-};
-
 const queryPage = async (
   {
     TableName,
@@ -89,7 +29,7 @@ const queryPage = async (
   },
   lastKeyJson?: string
 ): Promise<[{ [key: string]: any }[], string]> => {
-  const params: DocumentClient.QueryInput = {
+  const params: DynamoDB.DocumentClient.QueryInput = {
     TableName,
     KeyConditionExpression: `#key=:value`,
     ExpressionAttributeNames: {
@@ -105,139 +45,9 @@ const queryPage = async (
   if (lastKeyJson) {
     params.ExclusiveStartKey = JSON.parse(lastKeyJson);
   }
-  console.log("query params>", JSON.stringify(params, null, 2));
   let { Items, LastEvaluatedKey } = await ddb().query(params).promise();
   return [Items, LastEvaluatedKey && JSON.stringify(LastEvaluatedKey)];
 };
-const queryMap = async <T>(
-  o: queryOptions,
-  f: (item: { [key: string]: any }) => Promise<T> | T
-) => {
-  let lastKey: string;
-  let out: T[] = [];
-  do {
-    const [arr, temp] = await queryPage(o, lastKey);
-    out = [...out, ...(await Promise.all(arr.map(f)))];
-    if (o.limit && arr.length > o.limit - 1) break;
-    lastKey = temp;
-  } while (lastKey);
-  return out;
-};
-const queryMapSerial = async <T>(
-  o: queryOptions,
-  f: (item: { [key: string]: any }) => T
-) => {
-  let lastKey: string;
-  let out: T[] = [];
-  doloop: do {
-    const [arr, temp] = await queryPage(o, lastKey);
-    for (const item of arr) {
-      const temp = f(item);
-      out.push(temp);
-      if (o.limit && out.length > o.limit - 1) break doloop;
-    }
-    lastKey = temp;
-  } while (lastKey);
-  return out;
-};
-const queryReduce = async <T>(
-  params: DynamoDB.DocumentClient.QueryInput,
-  f: (
-    previousValue: T,
-    currentValue: { [key: string]: any },
-    currentIndex: number,
-    array: { [key: string]: any }[]
-  ) => T,
-  start: T,
-  limit: number = 0
-): Promise<T> => {
-  let results = await ddb()
-    .query({ ...params })
-    .promise();
-  const out = results.Items.reduce(f, start);
-  if (results.LastEvaluatedKey) {
-    params.ExclusiveStartKey = results.LastEvaluatedKey;
-    return queryReduce(params, f, out, limit && limit - results.Items.length);
-  }
-  return out;
-};
-const withHash = (
-  hashKey: string,
-  hashValue: DynamoDB.DocumentClient.Key
-): { [key: string]: any } => {
-  const params = {
-    KeyConditions: {
-      [hashKey]: {
-        ComparisonOperator: "EQ",
-        AttributeValueList: [hashValue],
-      },
-    },
-  };
-  return params;
-};
-const hashMap = async <T>(
-  hashKey: string,
-  hashValue: DynamoDB.DocumentClient.Key,
-  TableName: string,
-  f: (item: { [key: string]: any }) => T
-) => {
-  return queryMap({ ...withHash(hashKey, hashValue), TableName }, f);
-};
-const hashReduce = async <T>(
-  hashKey: string,
-  hashValue: DynamoDB.DocumentClient.Key,
-  TableName: string,
-  f: (item: { [key: string]: any }) => T,
-  start: T,
-  limit: number = 0
-) => {
-  return queryReduce<T>(
-    { ...withHash(hashKey, hashValue), TableName },
-    f,
-    start,
-    limit
-  );
-};
-const withSecondaryIndex = (key: string, value: any, IndexName: string) => {
-  const params = {
-    KeyConditionExpression: "#key=:value",
-    ExpressionAttributeNames: {
-      "#key": key,
-    },
-    ExpressionAttributeValues: {
-      ":value": value,
-    },
-    IndexName,
-  };
-  return params;
-};
-const secondaryIndexMap = async <T>(
-  key: string,
-  value: any,
-  indexName: string,
-  TableName: string,
-  f: (item: { [key: string]: any }) => Promise<T> | T,
-  limit = 0
-) => {
-  const p = { ...withSecondaryIndex(key, value, indexName), TableName };
-  return queryMap<T>(p, f);
-};
-const queryCount = async (
-  params: DynamoDB.DocumentClient.QueryInput
-): Promise<number> => {
-  params.Select = "COUNT";
-  let { Count, LastEvaluatedKey } = await ddb()
-    .query({ ...params })
-    .promise();
-  if (LastEvaluatedKey) {
-    params.ExclusiveStartKey = LastEvaluatedKey;
-    return Count + (await queryCount(params));
-  }
-  return Count;
-};
-const queryAll = async (
-  params: DynamoDB.DocumentClient.QueryInput
-): Promise<{ [key: string]: any }[]> => queryMap(params, (item) => item);
 class DDBHandler {
   protected tableName: string;
   public cachedValues: { [key: string]: any } = {};
@@ -393,41 +203,12 @@ class DDBHandler {
     await ddb().delete(params).promise();
     return;
   }
-  async all() {
-    return scanAll({ TableName: this.tableName });
-  }
-  async map<T>(f: (item: { [key: string]: any }) => T): Promise<T[]> {
-    return scanMap({ TableName: this.tableName }, f);
-  }
-  async mapSerial<T>(f: (item: { [key: string]: any }) => T): Promise<T[]> {
-    return scanMapSerial({ TableName: this.tableName }, f);
-  }
-  async hashMap<T>(
-    hashValue: any,
-    f: (item: { [key: string]: any }) => T
-  ): Promise<T[]> {
-    return hashMap(this.hashKey(), hashValue, this.tableName, f);
-  }
-  async hashReduce<T>(
-    hashValue: any,
-    f: (item: { [key: string]: any }) => T,
-    start: T
-  ): Promise<T> {
-    return hashReduce(this.hashKey(), hashValue, this.tableName, f, start);
-  }
-  async secondaryIndexMap<T>(
-    key: string,
-    value: any,
-    indexName: string,
-    f: (item: { [key: string]: any }) => Promise<T> | T
-  ): Promise<T[]> {
-    return secondaryIndexMap(key, value, indexName, this.tableName, f);
-  }
   async hashPage(hashValue: any, lastValue?: string) {
     return queryPage(
       {
         TableName: this.tableName,
-        ...withHash(this.hashKey(), hashValue),
+        Key: this.hashKey(),
+        Value: hashValue,
       },
       lastValue
     );
@@ -440,8 +221,10 @@ class DDBHandler {
   ) {
     return queryPage(
       {
-        ...withSecondaryIndex(key, value, indexName),
         TableName: this.tableName,
+        Key: key,
+        Value: value,
+        IndexName: indexName,
       },
       lastValue
     );
@@ -491,16 +274,4 @@ class DDBHandler {
     return item !== null;
   }
 }
-export {
-  queryCount,
-  queryAll,
-  hashReduce,
-  hashMap,
-  queryReduce,
-  queryMap,
-  scanMap,
-  scanAll,
-  DDBHandler,
-  queryPage,
-  setDDB,
-};
+export { DDBHandler, queryPage, setDDB };
