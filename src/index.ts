@@ -1,246 +1,149 @@
 import { DynamoDB } from "aws-sdk";
 import { createHash } from "crypto";
-import { UpdateItemInput, DocumentClient } from "aws-sdk/clients/dynamodb";
-type filterFunc = (arg: any) => boolean;
-interface queryOptions extends DynamoDB.DocumentClient.QueryInput {
-  tableName?: string;
-  limit?: number;
-}
+import { UpdateItemInput } from "aws-sdk/clients/dynamodb";
+/**
+ * Instance of DynamoDB that will execute dynamoDB operations
+ */
 let savedDDB: DynamoDB.DocumentClient | undefined;
+/**
+ * Set new instance of DynamoDB for ddb-manager to use
+ * @param newDDB Instance of DynamoDB
+ */
 const setDDB = (newDDB: DynamoDB.DocumentClient) => {
   savedDDB = newDDB;
 };
+/**
+ * Returns instance of DynamoDB
+ */
 const ddb = () => {
   if (!savedDDB) {
     savedDDB = new DynamoDB.DocumentClient();
   }
   return savedDDB;
 };
-const scanAll = async (
-  params: queryOptions
-): Promise<{ [key: string]: any }[]> => {
-  return await scanMap(params, (o) => o);
-};
-const scanMap = async <T>(
-  o: queryOptions,
-  f: (item: { [key: string]: any }) => T
-): Promise<T[]> => {
-  let lastKey: string;
-  let out: T[] = [];
-  do {
-    const [arr, temp] = await scanPage(o, lastKey);
-    out = [...out, ...(await Promise.all(arr.map(f)))];
-    if (o.limit && arr.length > o.limit - 1) break;
-    lastKey = temp;
-  } while (lastKey);
-  return out;
-};
-const scanMapSerial = async <T>(
-  o: queryOptions,
-  f: (item: { [key: string]: any }) => T
-): Promise<T[]> => {
-  let lastKey: string;
-  let out: any[] = [];
-  doloop: do {
-    const [arr, temp] = await scanPage(o, lastKey);
-    for (const item of arr) {
-      const temp = f(item);
-      out.push(temp);
-      if (o.limit && out.length > o.limit - 1) break doloop;
-    }
-    lastKey = temp;
-  } while (lastKey);
-  return out;
-};
-const scanPage = async (
-  o: queryOptions,
-  lastKey?: string | DynamoDB.DocumentClient.Key | undefined
-): Promise<[{ [key: string]: any }[], string]> => {
-  const { tableName, limit: l = 0, ...rest } = o;
-  const TableName = tableName ? tableName : rest.TableName;
-  const limit = l;
-  const params = rest;
-  let { Items, LastEvaluatedKey } = await ddb()
-    .scan({
-      ExclusiveStartKey: <DynamoDB.DocumentClient.Key>lastKey,
-      TableName,
-      ...params,
-    })
-    .promise();
-  if (limit && Items.length > limit - 1) return [Items, undefined];
-  return [Items, LastEvaluatedKey && LastEvaluatedKey.toString()];
-};
+/**
+ * Run paginated query on dynamoDB table
+ * @param {Object} __namedParameters Query options
+ * @param {String} TableName Name of dynamoDB table to query
+ * @param {String} Key Partition (or sort) key to search against
+ * @param {String} Value Value an items "Key" should have
+ * @param {String} IndexName Name of dynamoDB global or secondary index
+ * @param {Boolean} isReversed Sort order for items. If true results are in ascending order; if false (default) results in descending order
+ * @param {Int} Limit Max number of items a page should return. Default 50 items per page
+ * @param lastKey Specifies where to start query. Undefined returned when no more items found
+ */
 const queryPage = async (
-  TableNameOrOptions: queryOptions,
-  lastKey?: DynamoDB.DocumentClient.Key | string | undefined
+  {
+    TableName,
+    Key,
+    Value,
+    IndexName,
+    isReversed = false,
+    Limit = 50,
+  }: {
+    /**
+     * blah
+     */
+    TableName: string;
+    Key: string;
+    Value: string | number;
+    IndexName?: string;
+    isReversed?: boolean;
+    Limit?: number;
+  },
+  lastKey?: string
 ): Promise<[{ [key: string]: any }[], string]> => {
-  const { tableName, limit: l = 0, ...rest } = TableNameOrOptions;
-  const TableName = tableName ? tableName : rest.TableName;
-  const limit = l;
-  const params = rest;
-  let { Items, LastEvaluatedKey } = await ddb()
-    .query({
-      ExclusiveStartKey: <DynamoDB.DocumentClient.Key>lastKey,
-      TableName,
-      ...params,
-    })
-    .promise();
-  if (limit && Items.length > limit - 1) return [Items, undefined];
-  return [Items, LastEvaluatedKey && LastEvaluatedKey.toString()];
-};
-const queryMap = async <T>(
-  o: queryOptions,
-  f: (item: { [key: string]: any }) => Promise<T> | T
-) => {
-  let lastKey: string;
-  let out: T[] = [];
-  do {
-    const [arr, temp] = await queryPage(o, lastKey);
-    out = [...out, ...(await Promise.all(arr.map(f)))];
-    if (o.limit && arr.length > o.limit - 1) break;
-    lastKey = temp;
-  } while (lastKey);
-  return out;
-};
-const queryMapSerial = async <T>(
-  o: queryOptions,
-  f: (item: { [key: string]: any }) => T
-) => {
-  let lastKey: string;
-  let out: T[] = [];
-  doloop: do {
-    const [arr, temp] = await queryPage(o, lastKey);
-    for (const item of arr) {
-      const temp = f(item);
-      out.push(temp);
-      if (o.limit && out.length > o.limit - 1) break doloop;
-    }
-    lastKey = temp;
-  } while (lastKey);
-  return out;
-};
-const queryReduce = async <T>(
-  params: DynamoDB.DocumentClient.QueryInput,
-  f: (
-    previousValue: T,
-    currentValue: { [key: string]: any },
-    currentIndex: number,
-    array: { [key: string]: any }[]
-  ) => T,
-  start: T,
-  limit: number = 0
-): Promise<T> => {
-  let results = await ddb()
-    .query({ ...params })
-    .promise();
-  const out = results.Items.reduce(f, start);
-  if (results.LastEvaluatedKey) {
-    params.ExclusiveStartKey = results.LastEvaluatedKey;
-    return queryReduce(params, f, out, limit && limit - results.Items.length);
-  }
-  return out;
-};
-const withHash = (
-  hashKey: string,
-  hashValue: DynamoDB.DocumentClient.Key
-): { [key: string]: any } => {
-  const params = {
-    KeyConditions: {
-      [hashKey]: {
-        ComparisonOperator: "EQ",
-        AttributeValueList: [hashValue],
-      },
-    },
-  };
-  return params;
-};
-const hashMap = async <T>(
-  hashKey: string,
-  hashValue: DynamoDB.DocumentClient.Key,
-  TableName: string,
-  f: (item: { [key: string]: any }) => T
-) => {
-  return queryMap({ ...withHash(hashKey, hashValue), TableName }, f);
-};
-const hashReduce = async <T>(
-  hashKey: string,
-  hashValue: DynamoDB.DocumentClient.Key,
-  TableName: string,
-  f: (item: { [key: string]: any }) => T,
-  start: T,
-  limit: number = 0
-) => {
-  return queryReduce<T>(
-    { ...withHash(hashKey, hashValue), TableName },
-    f,
-    start,
-    limit
-  );
-};
-const withSecondaryIndex = (key: string, value: any, IndexName: string) => {
-  const params = {
-    KeyConditionExpression: "#key=:value",
+  const params: DynamoDB.DocumentClient.QueryInput = {
+    TableName,
+    KeyConditionExpression: `#key=:value`,
     ExpressionAttributeNames: {
-      "#key": key,
+      "#key": Key,
     },
     ExpressionAttributeValues: {
-      ":value": value,
+      ":value": Value,
     },
-    IndexName,
+    ScanIndexForward: !isReversed,
+    Limit,
   };
-  return params;
-};
-const secondaryIndexMap = async <T>(
-  key: string,
-  value: any,
-  indexName: string,
-  TableName: string,
-  f: (item: { [key: string]: any }) => Promise<T> | T,
-  limit = 0
-) => {
-  const p = { ...withSecondaryIndex(key, value, indexName), TableName };
-  return queryMap<T>(p, f);
-};
-const queryCount = async (
-  params: DynamoDB.DocumentClient.QueryInput
-): Promise<number> => {
-  params.Select = "COUNT";
-  let { Count, LastEvaluatedKey } = await ddb()
-    .query({ ...params })
-    .promise();
-  if (LastEvaluatedKey) {
-    params.ExclusiveStartKey = LastEvaluatedKey;
-    return Count + (await queryCount(params));
+  if (IndexName) params.IndexName = IndexName;
+  if (lastKey) {
+    params.ExclusiveStartKey = JSON.parse(lastKey);
   }
-  return Count;
+  let { Items, LastEvaluatedKey } = await ddb().query(params).promise();
+  return [Items, LastEvaluatedKey && JSON.stringify(LastEvaluatedKey)];
 };
-const queryAll = async (
-  params: DynamoDB.DocumentClient.QueryInput
-): Promise<{ [key: string]: any }[]> => queryMap(params, (item) => item);
+/**
+ * Manager to handle CRUD operations on a dynamoDB item
+ *
+ */
 class DDBHandler {
+  /**
+   * DynamoDB table item lives in
+   */
   protected tableName: string;
+  /**
+   * Item attributes
+   */
   public cachedValues: { [key: string]: any } = {};
+  /**
+   * Item partition key name
+   */
   protected _hashKey: string;
+  /**
+   * Item primary key
+   */
   public id: {};
+  /**
+   * Flag that indicates whether item saved persistently. If true, item exists in dynamoDB table; if false, item does not exist in dynamoDB table
+   */
   public exists: boolean = false;
+  /**
+   * Flag that indicates where item data comes from. If true, data was passed via loadFromItem; if false, data was loaded directly from dynamoDB table
+   */
   public loaded: boolean = false;
   constructor(tableName: string, hashKey: string = "id") {
     this.tableName = tableName;
     this._hashKey = hashKey;
   }
+  /**
+   * Set id (primary key) of an item
+   *
+   * @param id Item primary key
+   * Id should be an object for a composite primary key
+   */
   setId(id: string | {}) {
     this.id = typeof id === "object" ? id : { id };
   }
+  /**
+   * Return partition key name
+   */
   hashKey() {
     return this._hashKey || Object.keys(this.id)[0];
   }
+  /**
+   * Set attribute
+   * @param key Name of attribute
+   * @param value Value of attribute
+   */
   async set(key: string, value: any) {
     await this._update({ [key]: value });
   }
+  /**
+   * Set multiple attributes
+   * @param o Object of attribute key/value pairs
+   */
   async setValues(o: { [key: string]: any }) {
     await this._update(o);
   }
-  protected processUpdates(updates: { [key: string]: any }) {
+  /**
+   * Transform an updates object to an array of tuples.
+   *
+   * Updates are saved locally only. Item in dynamoDB table will not be updated
+   *
+   * @param updates Updates to item attributes
+   *
+   */
+  protected processUpdates(updates: { [key: string]: any }): [string, any][] {
     const processedUpdates = Object.entries(updates).filter(([field, _]) => {
       if (field.includes(".")) {
         field = field.split(".")[0];
@@ -268,6 +171,10 @@ class DDBHandler {
     }, this.cachedValues || {});
     return processedUpdates;
   }
+  /**
+   * Update attributes
+   * @param updates Object of attribute key/value pairs
+   */
   protected async _update(updates: { [key: string]: any }) {
     const ExpressionAttributeNames: DynamoDB.DocumentClient.ExpressionAttributeNameMap = {};
     const ExpressionAttributeValues: DynamoDB.DocumentClient.ExpressionAttributeValueMap = {};
@@ -313,6 +220,14 @@ class DDBHandler {
     }
     return this;
   }
+  /**
+   * Create new dynamoDB Item
+   *
+   * If item with primary key already exists, that item will be replaced
+   * @param o Shape of item
+   * @param id Items primary key
+   * @param options Options for dynamoDB put operation
+   */
   async _create(
     o: { [key: string]: any },
     id: any,
@@ -337,12 +252,25 @@ class DDBHandler {
     await this.loadFromItem(Item);
     return this;
   }
+  /**
+   * Get attribute
+   * @param key Name of attribute
+   * @param def Default value for attribute
+   */
   get<T>(key: string, def?: T): T | undefined {
     return this.has(key) ? this.cachedValues[key] : def;
   }
+  /**
+   * Check if attribute exists
+   * @param key Name of attribute
+   */
   has(key: string) {
     return typeof this.cachedValues[key] !== "undefined";
   }
+  /**
+   * Initialize instance from dynamoDB item
+   * @param o Item primary key
+   */
   async load(o: any) {
     if (o) this.setId(o);
     const params = { TableName: this.tableName, Key: this.id };
@@ -358,12 +286,20 @@ class DDBHandler {
     }
     return this.loadFromItem(Item);
   }
+  /**
+   * Initialize instance from a plain old javascript object
+   * @param Item
+   */
   loadFromItem(Item: { [key: string]: any }) {
     this.cachedValues = { ...Item };
     this.exists = typeof Item != "undefined";
     this.loaded = true;
     return this;
   }
+  /**
+   * Delete item
+   * @param key Primary key of item to delete
+   */
   async delete(key?: string | { [key: string]: string }) {
     const params = {
       TableName: this.tableName,
@@ -372,45 +308,28 @@ class DDBHandler {
     await ddb().delete(params).promise();
     return;
   }
-  async all() {
-    return scanAll({ TableName: this.tableName });
-  }
-  async map<T>(f: (item: { [key: string]: any }) => T): Promise<T[]> {
-    return scanMap({ TableName: this.tableName }, f);
-  }
-  async mapSerial<T>(f: (item: { [key: string]: any }) => T): Promise<T[]> {
-    return scanMapSerial({ TableName: this.tableName }, f);
-  }
-  async hashMap<T>(
-    hashValue: any,
-    f: (item: { [key: string]: any }) => T
-  ): Promise<T[]> {
-    return hashMap(this.hashKey(), hashValue, this.tableName, f);
-  }
-  async hashReduce<T>(
-    hashValue: any,
-    f: (item: { [key: string]: any }) => T,
-    start: T
-  ): Promise<T> {
-    return hashReduce(this.hashKey(), hashValue, this.tableName, f, start);
-  }
-  async secondaryIndexMap<T>(
-    key: string,
-    value: any,
-    indexName: string,
-    f: (item: { [key: string]: any }) => Promise<T> | T
-  ): Promise<T[]> {
-    return secondaryIndexMap(key, value, indexName, this.tableName, f);
-  }
+  /**
+   * Run paginated query against partition key
+   * @param hashValue Value of items partition key
+   * @param lastValue Specifies where to start query. Undefined returned when no more items found
+   */
   async hashPage(hashValue: any, lastValue?: string) {
     return queryPage(
       {
         TableName: this.tableName,
-        ...withHash(this.hashKey(), hashValue),
+        Key: this.hashKey(),
+        Value: hashValue,
       },
       lastValue
     );
   }
+  /**
+   * Run paginated query against global or secondary index
+   * @param indexName Name of global or secondary index
+   * @param key Partition (or sort) key to search against
+   * @param value Value an items "Key" should have
+   * @param lastValueSpecifies where to start query. Undefined returned when no more items found
+   */
   async indexPage(
     indexName: string,
     key: string,
@@ -419,67 +338,13 @@ class DDBHandler {
   ) {
     return queryPage(
       {
-        ...withSecondaryIndex(key, value, indexName),
         TableName: this.tableName,
+        Key: key,
+        Value: value,
+        IndexName: indexName,
       },
       lastValue
     );
   }
-  async hashFind(
-    hashValue: any,
-    f: (item: { [key: string]: any }) => boolean
-  ): Promise<{ [key: string]: any }> {
-    let temp: string | undefined;
-    do {
-      const [items, lastIndex] = await this.hashPage(hashValue, temp);
-      for (const i of items) if (f(i)) return i;
-      temp = lastIndex;
-    } while (temp);
-    return null;
-  }
-  async hashSome(hashValue: any, f: (item: { [key: string]: any }) => boolean) {
-    const item = await this.hashFind(hashValue, f);
-    return item !== null;
-  }
-  async indexFind(
-    indexName: string,
-    key: string,
-    value: any,
-    f: (item: { [key: string]: any }) => boolean
-  ) {
-    let temp: string | undefined;
-    do {
-      const [items, lastIndex] = await this.indexPage(
-        indexName,
-        key,
-        value,
-        temp
-      );
-      for (const i of items) if (f(i)) return i;
-      temp = lastIndex;
-    } while (temp);
-    return null;
-  }
-  async indexSome(
-    indexName: string,
-    key: string,
-    value: any,
-    f: (item: { [key: string]: any }) => boolean
-  ) {
-    const item = await this.indexFind(indexName, key, value, f);
-    return item !== null;
-  }
 }
-export {
-  queryCount,
-  queryAll,
-  hashReduce,
-  hashMap,
-  queryReduce,
-  queryMap,
-  scanMap,
-  scanAll,
-  DDBHandler,
-  queryPage,
-  setDDB,
-};
+export { DDBHandler, queryPage, setDDB };
