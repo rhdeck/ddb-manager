@@ -11,45 +11,18 @@
 
 * [DDBHandler](#classesddbhandlermd)
 
-### Variables
-
-* [savedDDB](#let-savedddb)
-
 ### Functions
 
-* [ddb](#const-ddb)
-* [queryPage](#const-querypage)
-* [setDDB](#const-setddb)
-
-## Variables
-
-### `Let` savedDDB
-
-• **savedDDB**: *DocumentClient | undefined*
-
-*Defined in [index.ts:7](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L7)*
-
-Instance of DynamoDB that will execute dynamoDB operations
+* [queryPage](#querypage)
+* [setDDB](#setddb)
 
 ## Functions
 
-### `Const` ddb
+###  queryPage
 
-▸ **ddb**(): *DocumentClient‹›*
+▸ **queryPage**(`__namedParameters`: object, `lastKey?`: string): *Promise‹[object[], string | undefined]›*
 
-*Defined in [index.ts:18](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L18)*
-
-Returns instance of DynamoDB
-
-**Returns:** *DocumentClient‹›*
-
-___
-
-### `Const` queryPage
-
-▸ **queryPage**(`__namedParameters`: object, `lastKey?`: string): *Promise‹[object[], string]›*
-
-*Defined in [index.ts:35](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L35)*
+*Defined in [index.ts:37](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L37)*
 
 Run paginated query on dynamoDB table
 
@@ -72,15 +45,15 @@ Name | Type | Default |
 
 Specifies where to start query. Undefined returned when no more items found
 
-**Returns:** *Promise‹[object[], string]›*
+**Returns:** *Promise‹[object[], string | undefined]›*
 
 ___
 
-### `Const` setDDB
+###  setDDB
 
 ▸ **setDDB**(`newDDB`: DocumentClient): *void*
 
-*Defined in [index.ts:12](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L12)*
+*Defined in [index.ts:13](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L13)*
 
 Set new instance of DynamoDB for ddb-manager to use
 
@@ -143,7 +116,7 @@ Manager to handle CRUD operations on a dynamoDB item
 
 \+ **new DDBHandler**(`tableName`: string, `hashKey`: string): *[DDBHandler](#classesddbhandlermd)*
 
-*Defined in [index.ts:103](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L103)*
+*Defined in [index.ts:102](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L102)*
 
 **Parameters:**
 
@@ -160,7 +133,7 @@ Name | Type | Default |
 
 • **_hashKey**: *string*
 
-*Defined in [index.ts:91](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L91)*
+*Defined in [index.ts:90](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L90)*
 
 Item partition key name
 
@@ -170,7 +143,7 @@ ___
 
 • **cachedValues**: *object*
 
-*Defined in [index.ts:87](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L87)*
+*Defined in [index.ts:86](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L86)*
 
 Item attributes
 
@@ -184,7 +157,7 @@ ___
 
 • **exists**: *boolean* = false
 
-*Defined in [index.ts:99](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L99)*
+*Defined in [index.ts:98](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L98)*
 
 Flag that indicates whether item saved persistently. If true, item exists in dynamoDB table; if false, item does not exist in dynamoDB table
 
@@ -194,7 +167,7 @@ ___
 
 • **id**: *object*
 
-*Defined in [index.ts:95](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L95)*
+*Defined in [index.ts:94](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L94)*
 
 Item primary key
 
@@ -206,7 +179,7 @@ ___
 
 • **loaded**: *boolean* = false
 
-*Defined in [index.ts:103](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L103)*
+*Defined in [index.ts:102](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L102)*
 
 Flag that indicates where item data comes from. If true, data was passed via loadFromItem; if false, data was loaded directly from dynamoDB table
 
@@ -216,7 +189,7 @@ ___
 
 • **tableName**: *string*
 
-*Defined in [index.ts:83](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L83)*
+*Defined in [index.ts:82](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L82)*
 
 DynamoDB table item lives in
 
@@ -226,7 +199,7 @@ DynamoDB table item lives in
 
 ▸ **_create**(`o`: object, `id`: any, `options`: object): *Promise‹this›*
 
-*Defined in [index.ts:231](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L231)*
+*Defined in [index.ts:230](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L230)*
 
 Create new dynamoDB Item
 
@@ -248,7 +221,7 @@ ___
 
 ▸ **_update**(`updates`: object): *Promise‹this›*
 
-*Defined in [index.ts:178](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L178)*
+*Defined in [index.ts:177](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L177)*
 
 Update attributes
 
@@ -266,7 +239,7 @@ ___
 
 ▸ **delete**(`key?`: string | object): *Promise‹void›*
 
-*Defined in [index.ts:303](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L303)*
+*Defined in [index.ts:302](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L302)*
 
 Delete item
 
@@ -284,7 +257,7 @@ ___
 
 ▸ **get**‹**T**›(`key`: string, `def?`: T): *T | undefined*
 
-*Defined in [index.ts:260](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L260)*
+*Defined in [index.ts:259](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L259)*
 
 Get attribute
 
@@ -307,7 +280,7 @@ ___
 
 ▸ **has**(`key`: string): *boolean*
 
-*Defined in [index.ts:267](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L267)*
+*Defined in [index.ts:266](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L266)*
 
 Check if attribute exists
 
@@ -325,7 +298,7 @@ ___
 
 ▸ **hashKey**(): *string*
 
-*Defined in [index.ts:120](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L120)*
+*Defined in [index.ts:119](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L119)*
 
 Return partition key name
 
@@ -337,7 +310,7 @@ ___
 
 ▸ **hashPage**(`hashValue`: any, `lastValue?`: string): *Promise‹[object[], string]›*
 
-*Defined in [index.ts:316](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L316)*
+*Defined in [index.ts:315](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L315)*
 
 Run paginated query against partition key
 
@@ -356,7 +329,7 @@ ___
 
 ▸ **indexPage**(`indexName`: string, `key`: string, `value`: any, `lastValue?`: string): *Promise‹[object[], string]›*
 
-*Defined in [index.ts:333](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L333)*
+*Defined in [index.ts:332](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L332)*
 
 Run paginated query against global or secondary index
 
@@ -377,7 +350,7 @@ ___
 
 ▸ **load**(`o`: any): *Promise‹this›*
 
-*Defined in [index.ts:274](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L274)*
+*Defined in [index.ts:273](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L273)*
 
 Initialize instance from dynamoDB item
 
@@ -395,7 +368,7 @@ ___
 
 ▸ **loadFromItem**(`Item`: object): *this*
 
-*Defined in [index.ts:293](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L293)*
+*Defined in [index.ts:292](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L292)*
 
 Initialize instance from a plain old javascript object
 
@@ -413,7 +386,7 @@ ___
 
 ▸ **processUpdates**(`updates`: object): *[string, any][]*
 
-*Defined in [index.ts:146](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L146)*
+*Defined in [index.ts:145](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L145)*
 
 Transform an updates object to an array of tuples.
 
@@ -433,7 +406,7 @@ ___
 
 ▸ **set**(`key`: string, `value`: any): *Promise‹void›*
 
-*Defined in [index.ts:128](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L128)*
+*Defined in [index.ts:127](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L127)*
 
 Set attribute
 
@@ -452,7 +425,7 @@ ___
 
 ▸ **setId**(`id`: string | object): *void*
 
-*Defined in [index.ts:114](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L114)*
+*Defined in [index.ts:113](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L113)*
 
 Set id (primary key) of an item
 
@@ -470,7 +443,7 @@ ___
 
 ▸ **setValues**(`o`: object): *Promise‹void›*
 
-*Defined in [index.ts:135](https://github.com/IronLuffy55/ddb-manager/blob/0a1f54b/src/index.ts#L135)*
+*Defined in [index.ts:134](https://github.com/rhdeck/ddb-manager/blob/516bc63/src/index.ts#L134)*
 
 Set multiple attributes
 
