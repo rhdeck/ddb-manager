@@ -3,17 +3,19 @@ import { createHash } from "crypto";
 import { UpdateItemInput } from "aws-sdk/clients/dynamodb";
 /**
  * Instance of DynamoDB that will execute dynamoDB operations
+ * @internal
  */
 let savedDDB: DynamoDB.DocumentClient | undefined;
 /**
  * Set new instance of DynamoDB for ddb-manager to use
  * @param newDDB Instance of DynamoDB
  */
-const setDDB = (newDDB: DynamoDB.DocumentClient) => {
+export function setDDB(newDDB: DynamoDB.DocumentClient) {
   savedDDB = newDDB;
-};
+}
 /**
  * Returns instance of DynamoDB
+ * @internal
  */
 const ddb = () => {
   if (!savedDDB) {
@@ -23,16 +25,16 @@ const ddb = () => {
 };
 /**
  * Run paginated query on dynamoDB table
- * @param {Object} __namedParameters Query options
- * @param {String} TableName Name of dynamoDB table to query
- * @param {String} Key Partition (or sort) key to search against
- * @param {String} Value Value an items "Key" should have
- * @param {String} IndexName Name of dynamoDB global or secondary index
- * @param {Boolean} isReversed Sort order for items. If true results are in ascending order; if false (default) results in descending order
- * @param {Int} Limit Max number of items a page should return. Default 50 items per page
+ * @param __namedParameters Query options
+ * @param __namedParameters.TableName Name of dynamoDB table to query
+ * @param __namedParameters.Key Partition (or sort) key to search against
+ * @param __namedParameters.Value Partition key value to query on
+ * @param __namedParameters.IndexName Name of dynamoDB global or secondary index
+ * @param __namedParameters.isReversed Sort order for items. If true results are in ascending order; if false (default) results in descending order
+ * @param __namedParameters.Limit Max number of items a page should return. Default 50 items per page
  * @param lastKey Specifies where to start query. Undefined returned when no more items found
  */
-const queryPage = async (
+export async function queryPage(
   {
     TableName,
     Key,
@@ -41,9 +43,6 @@ const queryPage = async (
     isReversed = false,
     Limit = 50,
   }: {
-    /**
-     * blah
-     */
     TableName: string;
     Key: string;
     Value: string | number;
@@ -52,7 +51,7 @@ const queryPage = async (
     Limit?: number;
   },
   lastKey?: string
-): Promise<[{ [key: string]: any }[], string]> => {
+): Promise<[{ [key: string]: any }[], string | undefined]> {
   const params: DynamoDB.DocumentClient.QueryInput = {
     TableName,
     KeyConditionExpression: `#key=:value`,
@@ -71,12 +70,12 @@ const queryPage = async (
   }
   let { Items, LastEvaluatedKey } = await ddb().query(params).promise();
   return [Items, LastEvaluatedKey && JSON.stringify(LastEvaluatedKey)];
-};
+}
 /**
  * Manager to handle CRUD operations on a dynamoDB item
  *
  */
-class DDBHandler {
+export class DDBHandler {
   /**
    * DynamoDB table item lives in
    */
@@ -130,15 +129,15 @@ class DDBHandler {
   }
   /**
    * Set multiple attributes
-   * @param o Object of attribute key/value pairs
+   * @param mapOfValues Object of attribute key/value pairs (e.g. `{attribute1: "value1", attribute2: false}`)
    */
-  async setValues(o: { [key: string]: any }) {
-    await this._update(o);
+  async setValues(mapOfValues: { [key: string]: any }) {
+    await this._update(mapOfValues);
   }
   /**
    * Transform an updates object to an array of tuples.
    *
-   * Updates are saved locally only. Item in dynamoDB table will not be updated
+   * Updates are saved locally only. Item in dynamoDB table will not be updated by this function
    *
    * @param updates Updates to item attributes
    *
@@ -347,4 +346,3 @@ class DDBHandler {
     );
   }
 }
-export { DDBHandler, queryPage, setDDB };
