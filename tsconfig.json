@@ -16,7 +16,7 @@
     "strictNullChecks": false,
     "rootDir": "src",
     "inlineSourceMap": true,
-    "declarationDir": "lib/types"
+    "declarationDir": "lib"
   },
   "include": ["src/*"]
 }

@@ -3,7 +3,6 @@
   "version": "3.0.0",
   "description": "Base class for managing DynamoDB model",
   "main": "lib/index.js",
-  "types": "lib/types",
   "repository": "https://github.com/rhdeck/ddb-manager",
   "author": "Ray Deck",
   "license": "MIT",
@@ -11,7 +10,8 @@
     "test": "tsc --noEmit",
     "build": "tsc",
     "docs": "typedoc --theme markdown --readme none --mode file --stripInternal --excludeNotExported --includeVersion --out docstemp && rm README.md ; concat-md docstemp > README.md && rm -rf docstemp",
-    "prepublishOnly": "yarn build && yarn docs && git commit README.md -m \"docs: updating docs\" && git push"
+    "prepublishOnly": "yarn build && yarn docs && git commit README.md -m \"docs: updating docs\" && git push",
+    "onwatch": "yarn build && yarn docs"
   },
   "devDependencies": {
     "@commitlint/cli": "^9.1.1",
@@ -34,7 +34,8 @@
   ],
   "liveLink": {
     "ignoreMasks": [
-      "package.tgz"
+      "package.tgz",
+      "README.md"
     ]
   },
   "husky": {

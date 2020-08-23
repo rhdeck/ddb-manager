@@ -128,6 +128,13 @@ export class DDBHandler {
     await this._update({ [key]: value });
   }
   /**
+   * Remove attribute from a record
+   * @param key Name of attribute
+   */
+  async remove(key: string) {
+    await this._remove([key]);
+  }
+  /**
    * Set multiple attributes
    * @param mapOfValues Object of attribute key/value pairs (e.g. `{attribute1: "value1", attribute2: false}`)
    */
@@ -169,6 +176,86 @@ export class DDBHandler {
       return { ...o, [key]: value };
     }, this.cachedValues || {});
     return processedUpdates;
+  }
+  /**
+   * Transform an removes object to an array of tuples.
+   *
+   * Updates are saved locally only. Item in dynamoDB table will not be updated by this function
+   *
+   * @param removes Removed items
+   *
+   */
+  protected processRemoves(keys: string[]): string[] {
+    //Guard: do not remove keys
+    const processedUpdates = keys.filter((field) => {
+      if (field.includes(".")) {
+        field = field.split(".")[0];
+      }
+      return !Object.keys(this.id).includes(field);
+    });
+    this.cachedValues = processedUpdates.reduce((o, [key, value]) => {
+      if (key.includes("[")) {
+        //preventing expressions like. parent.list[index] = x
+        throw new Error("Update expression with lists not supported");
+      }
+      if (key.includes(".")) {
+        const keys = key.split(".");
+        const topKey = keys.shift();
+        const lastKey = keys.pop();
+        const topValue = { ...o[topKey] };
+        let val = topValue;
+        keys.forEach((key) => {
+          val = val[key];
+        });
+        delete val[lastKey];
+        return { ...o, [topKey]: topValue };
+      }
+      delete o[key];
+      return o;
+    }, this.cachedValues || {});
+    return processedUpdates;
+  }
+  /**
+   * Remove attributes from a field
+   * @param keys array of keys
+   * @internal
+   */
+  protected async _remove(keys: string[]) {
+    const ExpressionAttributeNames: DynamoDB.DocumentClient.ExpressionAttributeNameMap = {};
+    const statements: string[] = [];
+    this.processRemoves(keys).forEach((field) => {
+      if (field.includes(".")) {
+        const md5sum = createHash("md5");
+        md5sum.update(field);
+        const normalizedNameVariable = field
+          .split(".")
+          .map((part) => {
+            const newPart = `#${createHash("md5").update(part).digest("hex")}`;
+            ExpressionAttributeNames[newPart] = part;
+            return newPart;
+          })
+          .join(".");
+        statements.push(`${normalizedNameVariable}`);
+      } else {
+        const newPart = `${createHash("md5").update(field).digest("hex")}`;
+        statements.push(`#${newPart}`);
+        ExpressionAttributeNames[`#${newPart}`] = field;
+      }
+    });
+    if (statements.length) {
+      const UpdateExpression = `REMOVE ${statements.join(",")}`;
+      const updateParams: UpdateItemInput = {
+        TableName: this.tableName,
+        Key: this.id,
+        UpdateExpression,
+      };
+      if (Object.keys(ExpressionAttributeNames).length) {
+        updateParams.ExpressionAttributeNames = ExpressionAttributeNames;
+      }
+      if (!(await ddb().update(updateParams).promise()))
+        throw "Failed to update";
+    }
+    return this;
   }
   /**
    * Update attributes
