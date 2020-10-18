@@ -362,7 +362,6 @@ export class DDBHandler {
     const params = { TableName: this.tableName, Key: this.id };
     let { Item } = await ddb().get(params).promise();
     if (!Item) {
-      // console.warn("Error in loading item from DDB with params", { params });
       throw new Error(
         "Item  does not exist in ddb id:" +
           JSON.stringify(this.id) +
