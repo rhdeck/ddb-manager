@@ -328,7 +328,7 @@ export class DDBHandler {
       (o, [key, value]) => ({ ...o, [key]: value }),
       {}
     );
-    const Item = { ...id, ...updates };
+    const Item = { ...id, createDate: new Date().toISOString(), ...updates };
     const params = {
       TableName: this.tableName,
       Item,
