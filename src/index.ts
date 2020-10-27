@@ -1,6 +1,6 @@
 import { DynamoDB } from "aws-sdk";
 import { createHash } from "crypto";
-import { UpdateItemInput } from "aws-sdk/clients/dynamodb";
+import { DocumentClient } from "aws-sdk/clients/dynamodb";
 /**
  * Instance of DynamoDB that will execute dynamoDB operations
  * @internal
@@ -69,6 +69,27 @@ export async function queryPage(
     params.ExclusiveStartKey = JSON.parse(lastKey);
   }
   let { Items, LastEvaluatedKey } = await ddb().query(params).promise();
+  return [Items, LastEvaluatedKey && JSON.stringify(LastEvaluatedKey)];
+}
+/**
+ * Iterate through whole table - returns only the fields specified
+ * @param __namedParameters Scan options
+ * @param __namedParameters.TableName Name of dynamoDB table to query
+ * @param __namedParameters.fields list of fields that will be included in the projection result
+ * @param lastKey
+ */
+export async function scanPage(
+  { TableName, fields }: { TableName: string; fields: string[] },
+  lastKey: string
+) {
+  const params: DynamoDB.DocumentClient.ScanInput = {
+    TableName,
+    ProjectionExpression: fields.join(","),
+  };
+  if (lastKey) {
+    params.ExclusiveStartKey = JSON.parse(lastKey);
+  }
+  let { Items, LastEvaluatedKey } = await ddb().scan(params).promise();
   return [Items, LastEvaluatedKey && JSON.stringify(LastEvaluatedKey)];
 }
 /**
@@ -244,7 +265,7 @@ export class DDBHandler {
     });
     if (statements.length) {
       const UpdateExpression = `REMOVE ${statements.join(",")}`;
-      const updateParams: UpdateItemInput = {
+      const updateParams: DocumentClient.UpdateItemInput = {
         TableName: this.tableName,
         Key: this.id,
         UpdateExpression,
@@ -328,11 +349,23 @@ export class DDBHandler {
       (o, [key, value]) => ({ ...o, [key]: value }),
       {}
     );
+    const condition: Partial<DocumentClient.PutItemInput> = {
+      ConditionExpression: Object.keys(id)
+        .map((key) => `${key} <> :${key}`)
+        .join(" AND "),
+      ExpressionAttributeValues: Object.entries(id).reduce(
+        (o, [key, value]) => {
+          return { ...o, [":" + key]: value };
+        },
+        <{ [key: string]: any }>{}
+      ),
+    };
     const Item = { ...id, createDate: new Date().toISOString(), ...updates };
-    const params = {
+    const params: DocumentClient.PutItemInput = {
       TableName: this.tableName,
       Item,
       ...options,
+      ...condition,
     };
     await ddb().put(params).promise();
     await this.loadFromItem(Item);
