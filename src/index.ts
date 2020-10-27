@@ -14,6 +14,12 @@ export function setDDB(newDDB: DynamoDB.DocumentClient) {
   savedDDB = newDDB;
 }
 /**
+ * Class for high-level DDBManager errors that can include the original raw DDB/AWS error
+ */
+export class DDBError extends Error {
+  rawError?: Error;
+}
+/**
  * Returns instance of DynamoDB
  * @internal
  */
@@ -84,7 +90,10 @@ export async function scanPage(
 ) {
   const params: DynamoDB.DocumentClient.ScanInput = {
     TableName,
-    ProjectionExpression: fields.join(","),
+    ProjectionExpression: fields.map((_, index) => `#f_${index}`).join(","),
+    ExpressionAttributeNames: fields.reduce((o, value, index) => {
+      return { ...o, [`#f_${index}`]: value };
+    }, <{ [key: string]: string }>{}),
   };
   if (lastKey) {
     params.ExclusiveStartKey = JSON.parse(lastKey);
@@ -313,7 +322,7 @@ export class DDBHandler {
     });
     if (updateStatements.length) {
       const UpdateExpression = `SET ${updateStatements.join(",")}`;
-      const updateParams: UpdateItemInput = {
+      const updateParams: DocumentClient.UpdateItemInput = {
         TableName: this.tableName,
         Key: this.id,
         UpdateExpression,
@@ -351,11 +360,11 @@ export class DDBHandler {
     );
     const condition: Partial<DocumentClient.PutItemInput> = {
       ConditionExpression: Object.keys(id)
-        .map((key) => `${key} <> :${key}`)
+        .map((key, index) => `:f_${index} <> :v_${index}`)
         .join(" AND "),
       ExpressionAttributeValues: Object.entries(id).reduce(
-        (o, [key, value]) => {
-          return { ...o, [":" + key]: value };
+        (o, [key, value], index) => {
+          return { ...o, [":f_" + index]: key, [":v_" + index]: value };
         },
         <{ [key: string]: any }>{}
       ),
@@ -367,9 +376,18 @@ export class DDBHandler {
       ...options,
       ...condition,
     };
-    await ddb().put(params).promise();
-    await this.loadFromItem(Item);
-    return this;
+    try {
+      await ddb().put(params).promise();
+      await this.loadFromItem(Item);
+      return this;
+    } catch (e) {
+      const err = new DDBError(
+        "DDBManager Could not create record from params " +
+          JSON.stringify(params)
+      );
+      err.rawError = e;
+      throw e;
+    }
   }
   /**
    * Get attribute
