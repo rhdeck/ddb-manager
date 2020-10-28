@@ -360,11 +360,15 @@ export class DDBHandler {
     );
     const condition: Partial<DocumentClient.PutItemInput> = {
       ConditionExpression: Object.keys(id)
-        .map((key, index) => `:f_${index} <> :v_${index}`)
+        .map((key, index) => `attribute_not_exists(#f_${index})`)
         .join(" AND "),
-      ExpressionAttributeValues: Object.entries(id).reduce(
+      ExpressionAttributeNames: Object.entries(id).reduce(
         (o, [key, value], index) => {
-          return { ...o, [":f_" + index]: key, [":v_" + index]: value };
+          return {
+            ...o,
+            ["#f_" + index]: key,
+            // [":v_" + index]: value
+          };
         },
         <{ [key: string]: any }>{}
       ),
