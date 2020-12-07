@@ -81,19 +81,22 @@ export async function queryPage(
  * Iterate through whole table - returns only the fields specified
  * @param __namedParameters Scan options
  * @param __namedParameters.TableName Name of dynamoDB table to query
- * @param __namedParameters.fields list of fields that will be included in the projection result
+ * @param __namedParameters.fields list of fields that will be included in the projection result - gets all if undefined
  * @param lastKey
  */
 export async function scanPage(
-  { TableName, fields }: { TableName: string; fields: string[] },
-  lastKey: string
-) {
+  { TableName, fields }: { TableName: string; fields?: string[] },
+  lastKey?: string
+): Promise<[{ [key: string]: any }[], string | undefined]> {
   const params: DynamoDB.DocumentClient.ScanInput = {
     TableName,
-    ProjectionExpression: fields.map((_, index) => `#f_${index}`).join(","),
-    ExpressionAttributeNames: fields.reduce((o, value, index) => {
-      return { ...o, [`#f_${index}`]: value };
-    }, <{ [key: string]: string }>{}),
+    ProjectionExpression:
+      fields && fields.map((_, index) => `#f_${index}`).join(","),
+    ExpressionAttributeNames:
+      fields &&
+      fields.reduce((o, value, index) => {
+        return { ...o, [`#f_${index}`]: value };
+      }, <{ [key: string]: string }>{}),
   };
   if (lastKey) {
     params.ExclusiveStartKey = JSON.parse(lastKey);
