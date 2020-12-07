@@ -1,9 +1,9 @@
 
 <a name="readmemd"></a>
 
-[@raydeck/ddb-manager - v3.3.1](#readmemd)
+[@raydeck/ddb-manager - v3.3.2](#readmemd)
 
-# @raydeck/ddb-manager - v3.3.1
+# @raydeck/ddb-manager - v3.3.2
 
 ## Index
 
@@ -24,7 +24,7 @@
 
 ▸ **queryPage**(`__namedParameters`: object, `lastKey?`: string): *Promise‹[object[], string | undefined]›*
 
-*Defined in [src/index.ts:43](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L43)*
+*Defined in [src/index.ts:43](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L43)*
 
 Run paginated query on dynamoDB table
 
@@ -53,9 +53,9 @@ ___
 
 ###  scanPage
 
-▸ **scanPage**(`__namedParameters`: object, `lastKey`: string): *Promise‹string | object[][]›*
+▸ **scanPage**(`__namedParameters`: object, `lastKey?`: string): *Promise‹[object[], string | undefined]›*
 
-*Defined in [src/index.ts:87](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L87)*
+*Defined in [src/index.ts:87](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L87)*
 
 Iterate through whole table - returns only the fields specified
 
@@ -70,9 +70,9 @@ Name | Type |
 `TableName` | string |
 `fields` | string[] |
 
-▪ **lastKey**: *string*
+▪`Optional`  **lastKey**: *string*
 
-**Returns:** *Promise‹string | object[][]›*
+**Returns:** *Promise‹[object[], string | undefined]›*
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 ▸ **setDDB**(`newDDB`: DocumentClient): *void*
 
-*Defined in [src/index.ts:13](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L13)*
+*Defined in [src/index.ts:13](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L13)*
 
 Set new instance of DynamoDB for ddb-manager to use
 
@@ -95,7 +95,7 @@ Name | Type | Description |
 
 <a name="classesddberrormd"></a>
 
-[@raydeck/ddb-manager - v3.3.1](#readmemd) › [DDBError](#classesddberrormd)
+[@raydeck/ddb-manager - v3.3.2](#readmemd) › [DDBError](#classesddberrormd)
 
 # Class: DDBError
 
@@ -143,7 +143,7 @@ ___
 
 • **rawError**? : *[Error](#static-error)*
 
-*Defined in [src/index.ts:20](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L20)*
+*Defined in [src/index.ts:20](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L20)*
 
 ___
 
@@ -166,7 +166,7 @@ Defined in node_modules/typescript/lib/lib.es5.d.ts:984
 
 <a name="classesddbhandlermd"></a>
 
-[@raydeck/ddb-manager - v3.3.1](#readmemd) › [DDBHandler](#classesddbhandlermd)
+[@raydeck/ddb-manager - v3.3.2](#readmemd) › [DDBHandler](#classesddbhandlermd)
 
 # Class: DDBHandler
 
@@ -216,7 +216,7 @@ Manager to handle CRUD operations on a dynamoDB item
 
 \+ **new DDBHandler**(`tableName`: string, `hashKey`: string): *[DDBHandler](#classesddbhandlermd)*
 
-*Defined in [src/index.ts:132](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L132)*
+*Defined in [src/index.ts:135](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L135)*
 
 **Parameters:**
 
@@ -233,7 +233,7 @@ Name | Type | Default |
 
 • **_hashKey**: *string*
 
-*Defined in [src/index.ts:120](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L120)*
+*Defined in [src/index.ts:123](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L123)*
 
 Item partition key name
 
@@ -243,7 +243,7 @@ ___
 
 • **cachedValues**: *object*
 
-*Defined in [src/index.ts:116](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L116)*
+*Defined in [src/index.ts:119](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L119)*
 
 Item attributes
 
@@ -257,7 +257,7 @@ ___
 
 • **exists**: *boolean* = false
 
-*Defined in [src/index.ts:128](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L128)*
+*Defined in [src/index.ts:131](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L131)*
 
 Flag that indicates whether item saved persistently. If true, item exists in dynamoDB table; if false, item does not exist in dynamoDB table
 
@@ -267,7 +267,7 @@ ___
 
 • **id**: *object*
 
-*Defined in [src/index.ts:124](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L124)*
+*Defined in [src/index.ts:127](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L127)*
 
 Item primary key
 
@@ -279,7 +279,7 @@ ___
 
 • **loaded**: *boolean* = false
 
-*Defined in [src/index.ts:132](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L132)*
+*Defined in [src/index.ts:135](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L135)*
 
 Flag that indicates where item data comes from. If true, data was passed via loadFromItem; if false, data was loaded directly from dynamoDB table
 
@@ -289,7 +289,7 @@ ___
 
 • **tableName**: *string*
 
-*Defined in [src/index.ts:112](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L112)*
+*Defined in [src/index.ts:115](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L115)*
 
 DynamoDB table item lives in
 
@@ -299,7 +299,7 @@ DynamoDB table item lives in
 
 ▸ **_create**(`o`: object, `id`: any, `options`: object): *Promise‹this›*
 
-*Defined in [src/index.ts:347](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L347)*
+*Defined in [src/index.ts:350](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L350)*
 
 Create new dynamoDB Item
 
@@ -321,7 +321,7 @@ ___
 
 ▸ **_update**(`updates`: object): *Promise‹this›*
 
-*Defined in [src/index.ts:294](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L294)*
+*Defined in [src/index.ts:297](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L297)*
 
 Update attributes
 
@@ -339,7 +339,7 @@ ___
 
 ▸ **delete**(`key?`: string | object): *Promise‹void›*
 
-*Defined in [src/index.ts:443](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L443)*
+*Defined in [src/index.ts:446](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L446)*
 
 Delete item
 
@@ -357,7 +357,7 @@ ___
 
 ▸ **get**‹**T**›(`key`: string, `def?`: T): *T | undefined*
 
-*Defined in [src/index.ts:401](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L401)*
+*Defined in [src/index.ts:404](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L404)*
 
 Get attribute
 
@@ -380,7 +380,7 @@ ___
 
 ▸ **has**(`key`: string): *boolean*
 
-*Defined in [src/index.ts:408](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L408)*
+*Defined in [src/index.ts:411](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L411)*
 
 Check if attribute exists
 
@@ -398,7 +398,7 @@ ___
 
 ▸ **hashKey**(): *string*
 
-*Defined in [src/index.ts:149](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L149)*
+*Defined in [src/index.ts:152](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L152)*
 
 Return partition key name
 
@@ -410,7 +410,7 @@ ___
 
 ▸ **hashPage**(`hashValue`: any, `lastValue?`: string): *Promise‹[object[], string]›*
 
-*Defined in [src/index.ts:456](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L456)*
+*Defined in [src/index.ts:459](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L459)*
 
 Run paginated query against partition key
 
@@ -429,7 +429,7 @@ ___
 
 ▸ **indexPage**(`indexName`: string, `key`: string, `value`: any, `lastValue?`: string): *Promise‹[object[], string]›*
 
-*Defined in [src/index.ts:473](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L473)*
+*Defined in [src/index.ts:476](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L476)*
 
 Run paginated query against global or secondary index
 
@@ -450,7 +450,7 @@ ___
 
 ▸ **load**(`o`: any): *Promise‹this›*
 
-*Defined in [src/index.ts:415](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L415)*
+*Defined in [src/index.ts:418](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L418)*
 
 Initialize instance from dynamoDB item
 
@@ -468,7 +468,7 @@ ___
 
 ▸ **loadFromItem**(`Item`: object): *this*
 
-*Defined in [src/index.ts:433](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L433)*
+*Defined in [src/index.ts:436](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L436)*
 
 Initialize instance from a plain old javascript object
 
@@ -486,7 +486,7 @@ ___
 
 ▸ **processRemoves**(`keys`: string[]): *string[]*
 
-*Defined in [src/index.ts:218](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L218)*
+*Defined in [src/index.ts:221](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L221)*
 
 Transform an removes object to an array of tuples.
 
@@ -506,7 +506,7 @@ ___
 
 ▸ **processUpdates**(`updates`: object): *[string, any][]*
 
-*Defined in [src/index.ts:182](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L182)*
+*Defined in [src/index.ts:185](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L185)*
 
 Transform an updates object to an array of tuples.
 
@@ -526,7 +526,7 @@ ___
 
 ▸ **remove**(`key`: string): *Promise‹void›*
 
-*Defined in [src/index.ts:164](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L164)*
+*Defined in [src/index.ts:167](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L167)*
 
 Remove attribute from a record
 
@@ -544,7 +544,7 @@ ___
 
 ▸ **set**(`key`: string, `value`: any): *Promise‹void›*
 
-*Defined in [src/index.ts:157](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L157)*
+*Defined in [src/index.ts:160](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L160)*
 
 Set attribute
 
@@ -563,7 +563,7 @@ ___
 
 ▸ **setId**(`id`: string | object): *void*
 
-*Defined in [src/index.ts:143](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L143)*
+*Defined in [src/index.ts:146](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L146)*
 
 Set id (primary key) of an item
 
@@ -581,7 +581,7 @@ ___
 
 ▸ **setValues**(`mapOfValues`: object): *Promise‹void›*
 
-*Defined in [src/index.ts:171](https://github.com/rhdeck/ddb-manager/blob/18ed47c/src/index.ts#L171)*
+*Defined in [src/index.ts:174](https://github.com/rhdeck/ddb-manager/blob/1e678dc/src/index.ts#L174)*
 
 Set multiple attributes
 
