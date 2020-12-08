@@ -105,6 +105,34 @@ export async function scanPage(
   return [Items, LastEvaluatedKey && JSON.stringify(LastEvaluatedKey)];
 }
 /**
+ * Iterate through all pages of a function as generic 
+ * @typeparam T - Type of objects the paginator returns
+ * @typeparam R - Type of return value (defaults to void)
+ * @param paginator Function that returns a page as [object[], lastKey] tuple (like queryPage)
+ * @param f Map function - takes output of queryPage and returns a value
+ * @example
+ * ```ts
+ * const numbers = await pageMap(
+      (l) => Number_page(account, l),
+      async (number) => number.getId()
+    );
+    ```
+ */
+export async function pageMap<T, R = void>(
+  paginator: (l?: string) => Promise<[T[], string | undefined]>,
+  f: (arg: T) => Promise<R>
+): Promise<R[]> {
+  const out: R[] = [];
+  let lastKey: string | undefined;
+  do {
+    const [rs, nextKey] = await paginator(lastKey);
+    for (const r of rs) {
+      out.push(await f(r));
+    }
+  } while (lastKey);
+  return out;
+}
+/**
  * Manager to handle CRUD operations on a dynamoDB item
  *
  */
