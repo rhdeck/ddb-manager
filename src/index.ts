@@ -120,9 +120,10 @@ export async function scanPage(
  */
 export async function pageMap<T, R = void>(
   paginator: (l?: string) => Promise<[T[], string | undefined]>,
-  f: (arg: T) => Promise<R>
+  f: (arg: T) => Promise<R>,
+  filter: (arg: T) => Promise<boolean> = async (arg) => true
 ): Promise<R[]> {
-  const [out] = await cappedPageMap(paginator, f, -1);
+  const [out] = await cappedPageMap(paginator, f, -1, filter);
   return out;
 }
 /**
@@ -143,14 +144,18 @@ export async function pageMap<T, R = void>(
 export async function cappedPageMap<T, R = void>(
   paginator: (l?: string) => Promise<[T[], string | undefined]>,
   f: (arg: T) => Promise<R>,
-  limit: number = 1000
+  limit: number = 1000,
+  filter: (arg: T) => Promise<boolean> = async (arg) => true
 ): Promise<[R[], string | undefined]> {
   const out: R[] = [];
   let lastKey: string | undefined;
+  let count: number = 0;
   do {
     const [rs, nextKey] = await paginator(lastKey);
     for (const r of rs) {
-      out.push(await f(r));
+      if (await filter(r)) {
+        out.push(await f(r));
+      }
     }
   } while (lastKey && (limit === -1 || out.length < limit));
   return [out, lastKey];
