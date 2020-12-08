@@ -110,6 +110,7 @@ export async function scanPage(
  * @typeparam R - Type of return value (defaults to void)
  * @param paginator Function that returns a page as [object[], lastKey] tuple (like queryPage)
  * @param f Map function - takes output of queryPage and returns a value
+ * @param filter async function for filtering results 
  * @example
  * ```ts
  * const numbers = await pageMap(
@@ -123,7 +124,7 @@ export async function pageMap<T, R = void>(
   f: (arg: T) => Promise<R>,
   filter: (arg: T) => Promise<boolean> = async (arg) => true
 ): Promise<R[]> {
-  const [out] = await cappedPageMap(paginator, f, -1, filter);
+  const [out] = await cappedPageMap(paginator, f, -1, undefined, filter);
   return out;
 }
 /**
@@ -133,6 +134,8 @@ export async function pageMap<T, R = void>(
  * @param paginator Function that returns a page as [object[], lastKey] tuple (like queryPage)
  * @param f Map function - takes output of queryPage and returns a value
  * @param limit Number of records beyond which we don't get more from DB. 
+ * @param lastKey Last key used for the pagination (e.g. returned by the last call to cappedPageMap)
+ * @param filter async function for filtering results 
  * @example
  * ```ts
  * const [numbers, nextKey] = await cappedpageMap(
@@ -145,10 +148,10 @@ export async function cappedPageMap<T, R = void>(
   paginator: (l?: string) => Promise<[T[], string | undefined]>,
   f: (arg: T) => Promise<R>,
   limit: number = 1000,
+  lastKey?: string,
   filter: (arg: T) => Promise<boolean> = async (arg) => true
 ): Promise<[R[], string | undefined]> {
   const out: R[] = [];
-  let lastKey: string | undefined;
   let count: number = 0;
   do {
     const [rs, nextKey] = await paginator(lastKey);
