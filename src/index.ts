@@ -122,6 +122,29 @@ export async function pageMap<T, R = void>(
   paginator: (l?: string) => Promise<[T[], string | undefined]>,
   f: (arg: T) => Promise<R>
 ): Promise<R[]> {
+  const [out] = await cappedPageMap(paginator, f, -1);
+  return out;
+}
+/**
+ * Iterate through pages until hitting a specified limit as generic. Allows pagination independent of DB limits 
+ * @typeparam T - Type of objects the paginator returns
+ * @typeparam R - Type of return value (defaults to void)
+ * @param paginator Function that returns a page as [object[], lastKey] tuple (like queryPage)
+ * @param f Map function - takes output of queryPage and returns a value
+ * @param limit Number of records beyond which we don't get more from DB. 
+ * @example
+ * ```ts
+ * const [numbers, nextKey] = await cappedpageMap(
+      (l) => Number_page(account, l),
+      async (number) => number
+    );
+    ```
+ */
+export async function cappedPageMap<T, R = void>(
+  paginator: (l?: string) => Promise<[T[], string | undefined]>,
+  f: (arg: T) => Promise<R>,
+  limit: number = 1000
+): Promise<[R[], string | undefined]> {
   const out: R[] = [];
   let lastKey: string | undefined;
   do {
@@ -129,8 +152,8 @@ export async function pageMap<T, R = void>(
     for (const r of rs) {
       out.push(await f(r));
     }
-  } while (lastKey);
-  return out;
+  } while (lastKey && (limit === -1 || out.length < limit));
+  return [out, lastKey];
 }
 /**
  * Manager to handle CRUD operations on a dynamoDB item
