@@ -1,6 +1,6 @@
 {
   "name": "@raydeck/ddb-manager",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "Base class for managing DynamoDB model",
   "main": "lib/index.js",
   "repository": "https://github.com/rhdeck/ddb-manager",
