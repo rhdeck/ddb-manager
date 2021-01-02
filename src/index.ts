@@ -270,6 +270,44 @@ export class DDBHandler {
     return processedUpdates;
   }
   /**
+   * Cache increments.
+   *
+   * Updates are saved locally only. Item in dynamoDB table will not be updated by this function
+   *
+   * @param increments increments to item attributes (e.g. {count:5} would increment count by +5)
+   *
+   */
+  protected cacheIncrements(increments: {
+    [key: string]: number;
+  }): [string, number][] {
+    const processedUpdates = Object.entries(increments).filter(([field, _]) => {
+      if (field.includes(".")) {
+        field = field.split(".")[0];
+      }
+      return !Object.keys(this.id).includes(field);
+    });
+    this.cachedValues = processedUpdates.reduce((o, [key, value]) => {
+      if (key.includes("[")) {
+        //preventing expressions like. parent.list[index] = x
+        throw new Error("Update expression with lists not supported");
+      }
+      if (key.includes(".")) {
+        const keys = key.split(".");
+        const topKey = keys.shift();
+        const lastKey = keys.pop();
+        const topValue = { ...o[topKey] };
+        let val = topValue;
+        keys.forEach((key) => {
+          val = val[key];
+        });
+        val[lastKey] = (val[lastKey] || 0) + value;
+        return { ...o, [topKey]: topValue };
+      }
+      return { ...o, [key]: (o[key] || 0) + value };
+    }, this.cachedValues || {});
+    return processedUpdates;
+  }
+  /**
    * Transform an removes object to an array of tuples.
    *
    * Updates are saved locally only. Item in dynamoDB table will not be updated by this function
@@ -349,6 +387,56 @@ export class DDBHandler {
     }
     return this;
   }
+  /**
+   * Increment one attribute
+   * @param updates Object of attribute key/value pairs
+   */
+   async increment(field: string, byValue: number) {
+    const ExpressionAttributeNames: DynamoDB.DocumentClient.ExpressionAttributeNameMap = {};
+    const ExpressionAttributeValues: DynamoDB.DocumentClient.ExpressionAttributeValueMap = {};
+    const updateStatements: string[] = [];
+    //@TODO add support for caching the new count
+    this.cacheIncrements({ [field]: byValue });
+    if (field.includes(".")) {
+      const md5sum = createHash("md5");
+      md5sum.update(field);
+      const normalizedValueVariable = `:${md5sum.digest("hex")}`;
+      ExpressionAttributeValues[normalizedValueVariable] = byValue;
+      const normalizedNameVariable = field
+        .split(".")
+        .map((part) => {
+          const newPart = `#${createHash("md5").update(part).digest("hex")}`;
+          ExpressionAttributeNames[newPart] = part;
+          return newPart;
+        })
+        .join(".");
+      updateStatements.push(
+        `${normalizedNameVariable} = ${normalizedNameVariable} + ${normalizedValueVariable}`
+      );
+    } else {
+      const newPart = `${createHash("md5").update(field).digest("hex")}`;
+      updateStatements.push(`#${newPart} = #${newPart} + :${newPart}`);
+      ExpressionAttributeNames[`#${newPart}`] = field;
+      ExpressionAttributeValues[`:${newPart}`] = byValue;
+    }
+
+    if (updateStatements.length) {
+      const UpdateExpression = `SET ${updateStatements.join(",")}`;
+      const updateParams: DocumentClient.UpdateItemInput = {
+        TableName: this.tableName,
+        Key: this.id,
+        UpdateExpression,
+        ExpressionAttributeValues,
+      };
+      if (Object.keys(ExpressionAttributeNames).length) {
+        updateParams.ExpressionAttributeNames = ExpressionAttributeNames;
+      }
+      if (!(await ddb().update(updateParams).promise()))
+        throw "Failed to update";
+    }
+    return this;
+  }
+
   /**
    * Update attributes
    * @param updates Object of attribute key/value pairs
